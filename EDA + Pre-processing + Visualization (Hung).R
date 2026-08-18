@@ -924,5 +924,323 @@ write.csv(
   row.names = FALSE
 )
 
+# ============================================================
+# GRAB VIETNAM ANALYTICS
+# Visualizations and Descriptive Analytics
+# ============================================================
+
+# ------------------------------------------------------------
+# Figure 1: Distribution of Basket Value
+# ------------------------------------------------------------
+
+p1 <- ggplot(
+  basket,
+  aes(x = basket_value_vnd)
+) +
+  
+  geom_histogram(
+    aes(
+      fill = after_stat(
+        ifelse(
+          x >= basket_threshold,
+          "High-value (Top 20%)",
+          "Below 80th Percentile"
+        )
+      )
+    ),
+    bins = 30,
+    color = "white",
+    linewidth = 0.2
+  ) +
+  
+  geom_vline(
+    xintercept = basket_threshold,
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  
+  annotate(
+    "label",
+    x = basket_threshold + 15000,
+    y = Inf,
+    label = paste0(
+      "80th percentile\n",
+      format(
+        basket_threshold,
+        big.mark = ",",
+        scientific = FALSE
+      ),
+      " VND"
+    ),
+    vjust = 1.5,
+    hjust = 0,
+    size = 4
+  ) +
+  
+  labs(
+    title = "Distribution of Basket Value",
+    subtitle = paste0(
+      "Transactions above ",
+      format(
+        basket_threshold,
+        big.mark = ",",
+        scientific = FALSE
+      ),
+      " VND represent the top 20% of orders"
+    ),
+    x = "Basket Value (VND)",
+    y = "Number of Orders",
+    fill = "Transaction Group"
+  ) +
+  
+  scale_x_continuous(
+    labels = scales::label_number(
+      big.mark = ","
+    )
+  ) +
+  
+  scale_fill_manual(
+    values = c(
+      "Below 80th Percentile" = "grey60",
+      "High-value (Top 20%)" = "#2A9D8F"
+    )
+  ) +
+  
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title = element_text(
+      face = "bold",
+      size = 18
+    ),
+    plot.subtitle = element_text(
+      size = 12
+    ),
+    axis.title = element_text(
+      face = "bold"
+    ),
+    legend.position = "bottom",
+    panel.grid.minor = element_blank()
+  )
+
+ggsave(
+  "figures/01_basket_value_distribution.pdf",
+  p1,
+  width = 10,
+  height = 7
+)
+# ============================================================
+# Figure 2: BASKET VALUE BY SERVICE
+# ============================================================
+
+p2 <- ggplot(
+  basket,
+  aes(
+    x = service_type,
+    y = basket_value_vnd
+  )
+) +
+  
+  # Boxplot
+  geom_boxplot(
+    fill = "#4C86B8",
+    color = "black",
+    width = 0.5,
+    outlier.shape = 16,
+    outlier.color = "red",
+    outlier.size = 2.5
+  ) +
+  
+  # Mean marker
+  stat_summary(
+    fun = mean,
+    geom = "point",
+    shape = 18,
+    size = 3,
+    color = "black"
+  ) +
+  
+  labs(
+    title = "Basket Value by Service Type",
+    subtitle = "Comparison of transaction value between GrabFood and GrabMart",
+    x = "Service Type",
+    y = "Basket Value (VND)"
+  ) +
+  
+  scale_y_continuous(
+    labels = scales::label_number(
+      big.mark = ","
+    )
+  ) +
+  
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title = element_text(
+      face = "bold",
+      size = 18
+    ),
+    plot.subtitle = element_text(
+      size = 12
+    ),
+    axis.title = element_text(
+      face = "bold"
+    ),
+    axis.text.x = element_text(
+      size = 12
+    ),
+    panel.grid.minor = element_blank()
+  )
+
+ggsave(
+  "figures/02_basket_value_by_service.pdf",
+  p2,
+  width = 10,
+  height = 7
+)
 
 
+# ============================================================
+# Figure 3: BASKET VALUE BY CUSTOMER SEGMENT
+# ============================================================
+
+
+p3 <- ggplot(
+  basket,
+  aes(
+    x = reorder(customer_segment, basket_value_vnd, FUN = function(x) -median(x)),
+    y = basket_value_vnd
+  )
+) +
+  
+  geom_boxplot(
+    fill = "#4C86B8",
+    color = "black",
+    width = 0.6,
+    outlier.shape = NA
+  ) +
+  
+  stat_summary(
+    fun = mean,
+    geom = "point",
+    shape = 18,
+    size = 3,
+    color = "black"
+  ) +
+  
+  labs(
+    title = "Basket Value by Customer Segment",
+    subtitle = "Comparison of transaction value across customer segments",
+    x = "Customer Segment",
+    y = "Basket Value (VND)"
+  ) +
+  
+  scale_y_continuous(
+    labels = scales::label_number(
+      big.mark = ","
+    )
+  ) +
+  
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title = element_text(
+      face = "bold",
+      size = 18
+    ),
+    plot.subtitle = element_text(
+      size = 12
+    ),
+    axis.title = element_text(
+      face = "bold"
+    ),
+    axis.text.x = element_text(
+      angle = 30,
+      hjust = 1,
+      size = 12
+    ),
+    panel.grid.minor = element_blank()
+  )
+
+ggsave(
+  "figures/03_basket_value_by_customer_segment.pdf",
+  p3,
+  width = 10,
+  height = 7
+)
+
+# ============================================================
+# VISUALIZATION 4: CUSTOMER SEGMENT × SERVICE TYPE
+# ============================================================
+
+p4 <- ggplot(
+  basket,
+  aes(
+    x = reorder(
+      customer_segment,
+      basket_value_vnd,
+      FUN = function(x) -median(x)
+    ),
+    y = basket_value_vnd
+  )
+) +
+  
+  geom_boxplot(
+    fill = "#4C86B8",
+    color = "black",
+    width = 0.6,
+    outlier.shape = NA
+  ) +
+  
+  stat_summary(
+    fun = mean,
+    geom = "point",
+    shape = 18,
+    size = 3,
+    color = "black"
+  ) +
+  
+  facet_wrap(
+    ~ service_type
+  ) +
+  
+  labs(
+    title = "Basket Value by Customer Segment and Service Type",
+    subtitle = "Customer segment comparison within GrabFood and GrabMart",
+    x = "Customer Segment",
+    y = "Basket Value (VND)"
+  ) +
+  
+  scale_y_continuous(
+    labels = scales::label_number(
+      big.mark = ","
+    )
+  ) +
+  
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title = element_text(
+      face = "bold",
+      size = 18
+    ),
+    plot.subtitle = element_text(
+      size = 12
+    ),
+    axis.title = element_text(
+      face = "bold"
+    ),
+    axis.text.x = element_text(
+      angle = 30,
+      hjust = 1,
+      size = 11
+    ),
+    strip.text = element_text(
+      face = "bold",
+      size = 13
+    ),
+    panel.grid.minor = element_blank()
+  )
+
+ggsave(
+  "figures/04_customer_segment_by_service.pdf",
+  p4,
+  width = 12,
+  height = 7
+)
