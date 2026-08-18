@@ -615,7 +615,7 @@ ggplot(
 
 
 # ============================================================
-# 13. CREATE FINAL MODELLING DATASET
+# 13. CREATE MODEL DATASET
 # ============================================================
 
 model_variables <- c(
@@ -652,83 +652,269 @@ model_variables <- c(
 
 
 model_data <- basket %>%
-  select(all_of(model_variables)) %>%
-  drop_na()
+  select(all_of(model_variables))
 
 
 # ============================================================
-# 14. VALIDATE FINAL MODEL DATA
+# 14. TRAIN / TEST SPLIT
 # ============================================================
 
+set.seed(123)
 
-# Dimensions
+train_index <- createDataPartition(
+  model_data$basket_value_vnd,
+  p = 0.80,
+  list = FALSE
+)
 
-dim(model_data)
+train <- model_data[train_index, ]
+test <- model_data[-train_index, ]
 
 
-# Structure
+# Check number of observations
 
-str(model_data)
+nrow(model_data)
+nrow(train)
+nrow(test)
 
 
-# Missing values
+# Check proportions
 
-missing_model <- data.frame(
-  variable = names(model_data),
-  missing = sapply(
-    model_data,
-    function(x) sum(is.na(x))
+nrow(train) / nrow(model_data)
+nrow(test) / nrow(model_data)
+
+
+# ============================================================
+# 15. HANDLE MISSING VALUES
+# ============================================================
+
+# ------------------------------------------------------------
+# 15.1 Numerical variables
+# ------------------------------------------------------------
+
+numeric_model_vars <- c(
+  "customer_age",
+  "distance_km_clean"
+)
+
+
+# Calculate medians using TRAINING data only
+
+train_medians <- sapply(
+  train[numeric_model_vars],
+  median,
+  na.rm = TRUE
+)
+
+
+# Apply training medians to both datasets
+
+for (var in numeric_model_vars) {
+  
+  train[[var]][is.na(train[[var]])] <- train_medians[var]
+  
+  test[[var]][is.na(test[[var]])] <- train_medians[var]
+}
+
+
+# ------------------------------------------------------------
+# 15.2 Categorical variables
+# ------------------------------------------------------------
+
+categorical_model_vars <- c(
+  "payment_method",
+  "traffic_level",
+  "weather_condition",
+  "promo_code_used"
+)
+
+
+# Replace missing values with "Unknown"
+
+for (var in categorical_model_vars) {
+  
+  train[[var]] <- as.character(train[[var]])
+  test[[var]] <- as.character(test[[var]])
+  
+  train[[var]][is.na(train[[var]])] <- "Unknown"
+  test[[var]][is.na(test[[var]])] <- "Unknown"
+  
+  train[[var]] <- factor(train[[var]])
+  test[[var]] <- factor(
+    test[[var]],
+    levels = levels(train[[var]])
   )
+}
+
+# ============================================================
+# 16. VALIDATE TRAIN / TEST DATA
+# ============================================================
+
+# ------------------------------------------------------------
+# 16.1 Check observations and split proportions
+# ------------------------------------------------------------
+
+nrow(model_data)
+nrow(train)
+nrow(test)
+
+# Confirm no observations were lost
+nrow(train) + nrow(test) == nrow(model_data)
+
+# Check train/test proportions
+round(
+  c(
+    Train = nrow(train) / nrow(model_data),
+    Test = nrow(test) / nrow(model_data)
+  ) * 100,
+  2
 )
 
-missing_model
+
+# ------------------------------------------------------------
+# 16.2 Check variable consistency
+# ------------------------------------------------------------
+
+# Check that train and test contain the same variables
+identical(names(train), names(test))
+
+# Check dimensions
+dim(train)
+dim(test)
 
 
-# Categorical variables
+# ------------------------------------------------------------
+# 16.3 Check missing values
+# ------------------------------------------------------------
 
-table(model_data$customer_segment)
+colSums(is.na(train))
 
-table(model_data$service_type)
-
-table(model_data$city)
-
-table(model_data$payment_method)
-
-table(model_data$booking_channel)
-
-table(model_data$time_period)
-
-table(model_data$is_weekend)
-
-table(model_data$promo_code_used)
-
-table(model_data$traffic_level)
-
-table(model_data$weather_condition)
+colSums(is.na(test))
 
 
-# Numerical variables
+# ------------------------------------------------------------
+# 16.4 Compare target variable distribution
+# ------------------------------------------------------------
 
-summary(
-  model_data %>%
-    select(
-      basket_value_vnd,
-      customer_age,
-      distance_km_clean,
-      estimated_duration_min,
-      discount_amount_vnd
+train %>%
+  summarise(
+    n = n(),
+    mean = mean(basket_value_vnd),
+    median = median(basket_value_vnd),
+    sd = sd(basket_value_vnd),
+    min = min(basket_value_vnd),
+    Q1 = quantile(basket_value_vnd, 0.25),
+    Q3 = quantile(basket_value_vnd, 0.75),
+    max = max(basket_value_vnd)
+  )
+
+test %>%
+  summarise(
+    n = n(),
+    mean = mean(basket_value_vnd),
+    median = median(basket_value_vnd),
+    sd = sd(basket_value_vnd),
+    min = min(basket_value_vnd),
+    Q1 = quantile(basket_value_vnd, 0.25),
+    Q3 = quantile(basket_value_vnd, 0.75),
+    max = max(basket_value_vnd)
+  )
+
+
+# ------------------------------------------------------------
+# 16.5 Compare categorical variable distributions
+# ------------------------------------------------------------
+
+prop.table(table(train$service_type))
+prop.table(table(test$service_type))
+
+prop.table(table(train$customer_segment))
+prop.table(table(test$customer_segment))
+
+prop.table(table(train$city))
+prop.table(table(test$city))
+
+prop.table(table(train$payment_method))
+prop.table(table(test$payment_method))
+
+prop.table(table(train$booking_channel))
+prop.table(table(test$booking_channel))
+
+
+# ------------------------------------------------------------
+# 16.6 Compare numerical variable distributions
+# ------------------------------------------------------------
+
+numeric_vars <- c(
+  "customer_age",
+  "distance_km_clean",
+  "estimated_duration_min",
+  "discount_amount_vnd"
+)
+
+train %>%
+  summarise(
+    across(
+      all_of(numeric_vars),
+      list(
+        mean = ~mean(.x),
+        median = ~median(.x),
+        sd = ~sd(.x)
+      )
     )
+  )
+
+test %>%
+  summarise(
+    across(
+      all_of(numeric_vars),
+      list(
+        mean = ~mean(.x),
+        median = ~median(.x),
+        sd = ~sd(.x)
+      )
+    )
+  )
+
+
+# ------------------------------------------------------------
+# 16.7 Visual comparison of target variable
+# ------------------------------------------------------------
+
+comparison <- bind_rows(
+  train %>% mutate(dataset = "Train"),
+  test %>% mutate(dataset = "Test")
 )
 
+ggplot(
+  comparison,
+  aes(
+    x = dataset,
+    y = basket_value_vnd
+  )
+) +
+  geom_boxplot() +
+  labs(
+    title = "Basket Value Distribution: Train vs Test",
+    x = "Dataset",
+    y = "Basket Value (VND)"
+  ) +
+  theme_minimal()
 
 
 # ============================================================
-# 15. SAVE PROCESSED DATASETS
+# 17. SAVE MODEL DATASETS
 # ============================================================
 
 write.csv(
-  basket,
-  "data/basket_original.csv",
+  train,
+  "data/train.csv",
+  row.names = FALSE
+)
+
+write.csv(
+  test,
+  "data/test.csv",
   row.names = FALSE
 )
 
@@ -737,9 +923,6 @@ write.csv(
   "data/model_data.csv",
   row.names = FALSE
 )
-
-
-
 
 
 
