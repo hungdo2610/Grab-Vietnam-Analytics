@@ -1,28 +1,45 @@
-https://chatgpt.com/share/6a81d9c1-330c-83ec-ae56-802173a57b0d
+https://chatgpt.com/share/6a86deb5-f890-83ec-9711-1b93263f9ca5
 
-# 1. The overall project
+---
+
+# 1. Overall project
 
 Your project is about **GrabFood and GrabMart transaction value**.
 
-The central business question is:
+### Central business question
 
 > **Which customer, service, transaction, promotional, and environmental characteristics are associated with higher-value GrabFood and GrabMart transactions, and can these characteristics be used to predict transaction value and identify high-value transactions?**
 
-Your dependent/outcome variable is:
+You have two related outcomes:
+
+### Outcome 1 — Transaction value
 
 ```text
 basket_value_vnd
 ```
 
-So the project is fundamentally a **continuous-value prediction problem**.
+This is a **continuous variable**.
+
+### Outcome 2 — High-value transaction
+
+```text
+high_value
+```
+
+This is a **binary variable**:
+
+```text
+1 = top 20% of transaction values
+0 = remaining 80%
+```
+
+The two outcomes allow you to approach the business problem from both a **value prediction** and **high-value identification** perspective.
 
 ---
 
 # 2. Why basket value?
 
-For Food/Mart transactions, `basket_value_vnd` represents the value of the items in the customer's order.
-
-Your data shows:
+Your current distribution is:
 
 ```text
 Minimum       45,000
@@ -33,58 +50,59 @@ Q3           350,000
 Maximum      450,000
 ```
 
-You also found:
+Your current estimate of the 80th percentile is:
 
 ```text
-80th percentile = 369,000 VND
+369,000 VND
 ```
 
-This gives you a business definition:
+Therefore:
 
-> **A high-value transaction is an order whose basket value is in the top 20% of observed transactions.**
+> **A high-value transaction is defined as a transaction in the top 20% of basket values.**
 
-We'll refine the calculation later so that the threshold is calculated using the **training data only**.
+However, when modelling, the final threshold should be calculated using the **training data only** to avoid information leakage.
 
 ---
 
-# 3. Stage 1 — Business problem
+# 3. Business problem
 
-You need to explain why this matters to Grab.
-
-The basic business logic is:
+The business logic remains:
 
 ```text
 Not all transactions have equal monetary value
                 ↓
 Some transactions generate substantially
-higher order value
+higher order values
                 ↓
 Grab has limited marketing/resources
                 ↓
-Need to understand what characteristics
-are associated with higher-value transactions
+Need to understand characteristics
+associated with higher-value transactions
                 ↓
-Predict future transaction value
+Predict transaction value
                 ↓
-Identify potential high-value transactions
+Identify high-value transactions
+                ↓
+Develop targeted business actions
 ```
 
-The business benefit could include:
+Potential business applications include:
 
-* more targeted marketing
-* better customer segmentation
-* more effective promotions
+* targeted marketing
+* customer segmentation
+* upselling
+* promotion targeting
 * prioritization of valuable customer profiles
-* better allocation of marketing resources
-* identification of characteristics associated with larger orders
+* allocation of marketing resources
+* identifying characteristics associated with larger orders
 
 ---
 
-# 4. Stage 2 — Data preprocessing
+# 4. Data preprocessing
 
-You've already done a significant amount of this.
+Your existing preprocessing remains largely unchanged.
 
-## Duplicate transactions
+### Duplicates
 
 You found:
 
@@ -94,49 +112,31 @@ You found:
 923 unique booking IDs
 ```
 
-You should remove duplicate records before modelling.
+Remove duplicate records before modelling.
 
----
+### Numeric variables
 
-## Numeric variables
-
-Some numeric variables were initially imported as text.
-
-You've converted them to numeric, including things such as:
+Convert imported text variables to appropriate numeric formats, including:
 
 ```text
 discount_amount_vnd
 ```
 
-and previously the other numeric fields.
+and other relevant numerical fields.
 
----
+### Missing values
 
-## Missing values
+You've assessed missingness across the dataset.
 
-You've assessed missingness.
+`cancellation_reason`, with approximately 95% missingness, is not useful for this modelling problem.
 
-Important examples:
-
-```text
-customer_rating          ~7.6%
-driver_rating            ~7.5%
-distance                 ~2–3%
-driver_experience        ~2.9%
-weather                  ~2.9%
-actual_duration          ~2.7%
-traffic                  ~1.8%
-```
-
-`cancellation_reason` has around 95% missingness and isn't useful for this modelling problem.
-
-For the predictive models, you'll ultimately create a modelling dataset containing the variables required for that particular model and use an appropriate complete-case strategy.
+For modelling, create an appropriate modelling dataset and apply a consistent missing-value strategy.
 
 ---
 
 # 5. Distance cleaning
 
-You found clearly implausible observations such as:
+You've identified implausible distance observations such as:
 
 ```text
 115 km
@@ -145,15 +145,15 @@ You found clearly implausible observations such as:
 81.7 km
 ```
 
-combined with extremely short estimated durations.
+and investigated them using estimated speed/duration.
 
-You investigated these using estimated speed and created:
+You created:
 
 ```text
 distance_km_clean
 ```
 
-Your cleaned distribution became:
+with approximately:
 
 ```text
 Min       0.530 km
@@ -164,7 +164,7 @@ Q3        4.615
 Max      16.960
 ```
 
-This is a good preprocessing decision because otherwise those extreme values could disproportionately influence the regression.
+This cleaned variable should be used in the models.
 
 ---
 
@@ -179,53 +179,32 @@ is_weekend
 time_period
 ```
 
-For the final model, I recommend using:
+For modelling, use:
 
 ```text
 time_period
 is_weekend
 ```
 
-rather than putting both `booking_hour` and `time_period` into the same model.
+rather than simultaneously including both `booking_hour` and `time_period`.
 
-For example:
-
-```text
-Early Morning
-Morning
-Lunch
-Afternoon
-Evening
-Night
-```
-
-This is easier for business users to interpret.
+This keeps the model more interpretable for business users.
 
 ---
 
-# 7. Stage 3 — Exploratory Data Analysis
+# 7. Exploratory Data Analysis
 
-Your assignment requires **four ggplot2 visualizations**.
-
-The purpose isn't to make four random charts.
-
-Each visualization should answer a business question.
-
-I'd recommend:
+Your four visualizations should continue to answer specific business questions.
 
 ### Visualization 1 — Distribution of basket value
 
-You've already done this.
-
-It shows:
+Shows:
 
 * distribution
 * median
 * spread
 * potential outliers
-* 80th percentile threshold
-
----
+* high-value threshold
 
 ### Visualization 2 — Basket value by service
 
@@ -239,19 +218,15 @@ Question:
 
 > Does transaction value differ between services?
 
----
-
 ### Visualization 3 — Basket value by customer segment
 
 Question:
 
 > Which customer segments tend to generate higher-value transactions?
 
----
-
 ### Visualization 4 — Customer segment × service type
 
-Use:
+Using:
 
 ```r
 facet_wrap(~ service_type)
@@ -261,13 +236,11 @@ Question:
 
 > Does the relationship between customer segment and basket value differ between GrabFood and GrabMart?
 
-This is stronger than four basic boxplots because it introduces a second business dimension.
-
 ---
 
-# 8. Your candidate predictors
+# 8. Candidate predictors
 
-You've now investigated a fairly comprehensive set of variables.
+Your candidate variables remain:
 
 ### Customer
 
@@ -315,161 +288,129 @@ weather_condition
 
 ---
 
-# 9. What you've learned from the additional EDA
+# 9. EDA findings
 
-### Promo code
+Your existing findings remain useful.
 
-There were differences in average basket values across promo codes.
+### Promotion
 
-For example:
+Different promo codes showed differences in average basket value, so:
 
 ```text
-MART15       265,111
-WELCOME      261,846
-WEEKEND      248,990
-LOYALTY      247,419
-None         245,217
-FOOD20       232,836
-RIDE10       230,188
+promo_code_used
 ```
 
-So `promo_code_used` is worth testing.
-
----
+is worth testing.
 
 ### Discount
 
 You found:
 
-[
-r=-0.0247
-]
+```text
+r = -0.0247
+```
 
 between discount amount and basket value.
 
-That's essentially no linear relationship.
+This is a very weak linear relationship.
 
-Therefore:
-
-> `discount_amount_vnd` is a weak candidate, but we'll let model comparison determine whether it adds predictive value.
-
----
+Therefore, `discount_amount_vnd` is a weak candidate, but it can still be tested in the models.
 
 ### Traffic
 
-There was some difference:
+There are some differences in average basket value across traffic levels, so:
 
 ```text
-Low       250,323
-High      244,379
-Medium    243,484
-Severe    227,742
+traffic_level
 ```
 
-So `traffic_level` is worth testing, although the differences aren't huge.
-
----
+is worth testing.
 
 ### Weather
 
-The most interesting category was Heavy Rain:
+Heavy Rain showed a substantially lower average basket value, although there are only 28 observations.
+
+Therefore:
 
 ```text
-Clear          247,214
-Cloudy         247,598
-Rain           242,331
-Heavy Rain     199,571
+weather_condition
 ```
 
-There are only 28 Heavy Rain observations, so we need to be cautious.
-
-But there is enough evidence to **test weather in the model**.
+can be tested, but its result should be interpreted cautiously.
 
 ---
 
-# 10. Stage 4 — Train/test split
+# 10. Train/test split
 
-Before predictive modelling, you'll split your data into:
-
-```text
-Training data
-        +
-Testing data
-```
-
-For example:
+Before predictive modelling:
 
 ```text
-80% training
-20% testing
+Full dataset
+      ↓
+Train / Test split
+      ↓
+80% Training       20% Testing
 ```
 
 The training data is used to build the models.
 
-The test data is used to evaluate how well they perform on **unseen transactions**.
+The test data is held back for evaluating performance on unseen transactions.
 
-This is essential.
+This is particularly important because you will eventually compare **three different modelling approaches**.
 
 ---
 
-# 11. Stage 5 — Multiple Linear Regression
+# 11. Model 1 — Multiple Linear Regression
 
-This is your **main interpretable statistical model**.
+MLR is your **baseline and most interpretable model**.
 
-The basic idea is:
+Target:
 
-[
-BasketValue =
-\beta_0+
-\beta_1X_1+
-\beta_2X_2+
-...+
-\beta_kX_k+
-\epsilon
-]
+```text
+basket_value_vnd
+```
 
-The advantage is that you can explain individual variables.
+Purpose:
+
+> **Understand which customer and transaction characteristics are statistically associated with basket value and establish a baseline prediction model.**
+
+MLR allows you to examine:
+
+* coefficients
+* direction of relationships
+* magnitude
+* statistical significance
+* prediction performance
 
 For example:
 
 > Holding other variables constant, customers in Segment X are associated with higher expected basket values than the reference segment.
 
-This is extremely useful for your **business users and data analyst audience**.
-
 ---
 
 # 12. MLR iterations
 
-This is where the "iterations" come in.
+The iterations remain important.
 
-You are **not building five different types of models**.
+You are progressively adding **groups of predictors to the same MLR technique**.
 
-You are progressively adding groups of predictors to the **same modelling technique: Multiple Linear Regression**.
-
-### MLR Model 1 — Baseline
+### MLR 1 — Baseline
 
 ```text
-Customer + Service
-```
-
-```r
-basket_value_vnd ~
-customer_segment +
-service_type +
+customer_segment
+service_type
 customer_age
 ```
 
 Purpose:
 
-> Establish a simple baseline.
+> Establish the baseline relationship between customer characteristics, service and basket value.
 
----
+### MLR 2 — Add transaction/operational characteristics
 
-### MLR Model 2 — Add business/order characteristics
+Add:
 
 ```text
-Model 1
-+
 city
 payment_method
 booking_channel
@@ -481,43 +422,37 @@ Purpose:
 
 > Determine whether transaction and operational characteristics improve prediction.
 
----
+### MLR 3 — Add time
 
-### MLR Model 3 — Add time
+Add:
 
 ```text
-Model 2
-+
 time_period
 is_weekend
 ```
 
 Purpose:
 
-> Determine whether timing provides additional predictive information.
+> Determine whether timing contributes additional predictive information.
 
----
+### MLR 4 — Add promotion
 
-### MLR Model 4 — Add promotion
+Add:
 
 ```text
-Model 3
-+
 promo_code_used
 discount_amount_vnd
 ```
 
 Purpose:
 
-> Determine whether promotional information improves prediction.
+> Determine whether promotional characteristics improve prediction.
 
----
+### MLR 5 — Add environment
 
-### MLR Model 5 — Full candidate model
+Add:
 
 ```text
-Model 4
-+
 traffic_level
 weather_condition
 ```
@@ -528,78 +463,68 @@ Purpose:
 
 ---
 
-# 13. How you evaluate the MLR iterations
+# 13. Evaluate the MLR iterations
 
-For every MLR model, calculate:
+For each iteration, compare:
 
 ### R²
 
-How much variation in basket value does the model explain?
-
-**Higher is better.**
+Higher is better.
 
 ### Adjusted R²
 
-Like R², but accounts for the number of predictors.
-
-Useful when comparing models with different numbers of variables.
+Useful for comparing models with different numbers of predictors.
 
 ### RMSE
 
-How large are prediction errors, with larger errors penalized more heavily?
-
-**Lower is better.**
+Lower is better.
 
 ### MAE
 
-Average absolute prediction error in VND.
-
-**Lower is better.**
-
-This is especially useful for your business audience.
+Lower is better and particularly easy to communicate in VND.
 
 For example:
 
-> "The model's MAE was 52,000 VND, meaning predictions were on average approximately 52,000 VND away from actual basket values."
+> An MAE of 52,000 VND means that predictions are, on average, approximately 52,000 VND away from actual basket values.
 
 ---
 
-# 14. Stage 6 — Select the best MLR
+# 14. Select the best MLR
 
-You don't automatically choose MLR 5.
+Don't automatically choose MLR 5.
 
-Suppose the results show:
+Instead, examine whether adding each group of variables meaningfully improves performance.
+
+For example:
 
 ```text
-MLR 1 → MLR 2   large improvement
-MLR 2 → MLR 3   moderate improvement
-MLR 3 → MLR 4   almost no improvement
-MLR 4 → MLR 5   almost no improvement
+MLR 1 → MLR 2     large improvement
+MLR 2 → MLR 3     moderate improvement
+MLR 3 → MLR 4     minimal improvement
+MLR 4 → MLR 5     minimal improvement
 ```
 
-Then you might prefer MLR 3 because the additional variables don't provide enough predictive improvement to justify the complexity.
+You might then select MLR 3 rather than the full model.
 
-This is an important **business analytics decision**.
+This demonstrates **model refinement rather than simply adding every available variable**.
 
 ---
 
-# 15. Stage 7 — Model diagnostics
+# 15. MLR diagnostics
 
-Once you have your best MLR, check whether the regression assumptions are reasonable.
-
-You'll examine:
+For the selected MLR, assess:
 
 ### Linearity
 
-Does the relationship between predictors and outcome behave reasonably linearly?
+Are the relationships reasonably linear?
 
 ### Homoscedasticity
 
-Are prediction errors reasonably consistent?
+Are residual variances reasonably consistent?
 
 ### Residuals
 
-Are there serious problems with residual distribution?
+Are there serious residual problems?
 
 ### Multicollinearity
 
@@ -613,275 +538,367 @@ distance_km_clean
 estimated_duration_min
 ```
 
-are naturally related.
-
 ### Influential observations
 
-Are a few transactions disproportionately affecting the model?
+Are individual transactions disproportionately affecting the model?
 
 ---
 
-# 16. Stage 8 — Random Forest
+# 16. Model 2 — Decision Tree Regression
 
-Now comes the **second modelling technique**.
+This replaces the Random Forest in your original approach.
 
-Random Forest is a machine-learning model that can capture:
-
-* nonlinear relationships
-* interactions
-* complex combinations of variables
-
-without you manually specifying them.
-
-You will build:
-
-> **Random Forest Regression**
-
-because your outcome is continuous:
+The target remains:
 
 ```text
 basket_value_vnd
 ```
 
-not a classification model.
+The Decision Tree gives you a **second, more flexible way of predicting transaction value**.
 
----
+Its major advantage for your project is **actionability**.
 
-# 17. Why Random Forest?
-
-This gives you a useful comparison:
-
-### Multiple Linear Regression
-
-> "Can we explain and predict basket value using an interpretable linear model?"
-
-### Random Forest
-
-> "Can a more flexible machine-learning method predict basket value more accurately?"
-
-That's a very strong analytical question.
-
----
-
-# 18. Compare MLR vs Random Forest
-
-Your final model comparison might look like:
-
-| Model             | RMSE | MAE | R² | Interpretability |
-| ----------------- | ---: | --: | -: | ---------------- |
-| MLR 1             |    — |   — |  — | High             |
-| MLR 2             |    — |   — |  — | High             |
-| MLR 3             |    — |   — |  — | High             |
-| MLR 4             |    — |   — |  — | High             |
-| MLR 5             |    — |   — |  — | High             |
-| **Best MLR**      |    — |   — |  — | **High**         |
-| **Random Forest** |    — |   — |  — | Medium           |
-
-Then:
-
-### If Random Forest is much better
-
-You can say:
-
-> Random Forest provided superior predictive performance, suggesting nonlinear relationships and/or interactions among transaction characteristics.
-
-### If performance is similar
-
-You could recommend MLR because:
-
-> It provides comparable predictive performance while being substantially easier to interpret and communicate.
-
-That's a very business-oriented conclusion.
-
----
-
-# 19. Stage 9 — Variable importance
-
-You also need to explain **what matters**.
-
-For MLR:
-
-* coefficients
-* p-values
-* direction/magnitude
-
-For Random Forest:
-
-* variable importance
-
-For example, Random Forest might tell you:
+A Decision Tree can identify rules such as:
 
 ```text
-distance                  █████████
-customer_segment          ███████
-estimated_duration        ██████
-service_type              █████
-promo_code                ███
-weather                   ██
+Distance > X km?
+       ↓
+Service Type A?
+       ↓
+Customer Segment B?
+       ↓
+Higher predicted basket value
 ```
 
-Again, those are illustrative only.
-
-This helps answer:
-
-> **What characteristics are most useful for predicting high-value transactions?**
+These rules can be much easier for business users to understand than a complex machine-learning model.
 
 ---
 
-# 20. Stage 10 — Business threshold
+# 17. Why Decision Tree?
 
-This is where your regression project becomes a **business decision model**.
+The comparison becomes:
 
-The model predicts:
+### MLR
+
+> **What variables are statistically associated with basket value?**
+
+### Decision Tree
+
+> **What combinations and thresholds of characteristics separate transactions into different basket-value groups?**
+
+This is particularly relevant because your priority is **actionable insights**.
+
+The Decision Tree can reveal:
+
+* important splitting variables
+* thresholds
+* customer/transaction segments
+* nonlinear relationships
+* interactions between variables
+* combinations associated with higher predicted basket values
+
+---
+
+# 18. Compare MLR vs Decision Tree
+
+Because both models predict:
 
 ```text
-Predicted basket value
+basket_value_vnd
 ```
+
+they can be directly compared.
+
+| Model         | RMSE | MAE | R² | Interpretability | Actionable rules |
+| ------------- | ---: | --: | -: | ---------------- | ---------------- |
+| Best MLR      |    — |   — |  — | High             | Moderate         |
+| Decision Tree |    — |   — |  — | High             | **Very High**    |
+
+### If Decision Tree performs better
+
+You can conclude:
+
+> The Decision Tree provides stronger predictive performance, suggesting that nonlinear relationships and/or interactions may be important in explaining transaction value.
+
+### If MLR performs similarly or better
+
+You could conclude:
+
+> MLR provides comparable or superior predictive performance while offering a simpler statistical interpretation.
+
+Either outcome is valuable.
+
+---
+
+# 19. Model 3 — Logistic Regression
+
+This is the major addition to your revised approach.
+
+Unlike MLR and Decision Tree, Logistic Regression does **not** predict the exact basket value.
+
+Its target is:
+
+```text
+high_value
+```
+
+where:
+
+```text
+1 = top 20%
+0 = remaining 80%
+```
+
+Its purpose is:
+
+> **Identify characteristics associated with a higher probability of a transaction being high-value.**
+
+This directly addresses your targeting objective.
+
+---
+
+# 20. Why Logistic Regression adds value
+
+Your regression models answer:
+
+> **How much is the transaction likely to be worth?**
+
+Logistic Regression answers:
+
+> **Is the transaction likely to belong to the high-value group?**
 
 For example:
 
 ```text
-Customer A → 420,000 VND
-Customer B → 185,000 VND
-Customer C → 395,000 VND
-```
-
-Then you compare predictions with the high-value threshold.
-
-Your current estimate is:
-
-```text
-369,000 VND
-```
-
-So:
-
-```text
-Predicted ≥ 369,000
+Transaction A
+Predicted basket value = 420,000 VND
         ↓
-Potential high-value transaction
+Likely high-value
 ```
 
-while:
+But Logistic Regression gives you a probability:
 
 ```text
-Predicted < 369,000
-        ↓
-Standard transaction
+P(high-value) = 0.78
 ```
 
-Again, we'll calculate the final threshold from **training data only**.
+This is much more directly usable for **targeting and prioritization**.
 
 ---
 
-# 21. Why this is better than immediately doing classification
+# 21. Logistic Regression outputs
 
-You could simply classify transactions as:
+You can examine:
+
+### Odds ratios
+
+These help explain how predictors affect the odds of being high-value.
+
+For example:
+
+> A particular customer segment has higher odds of being classified as high-value than the reference segment, holding other variables constant.
+
+### Predicted probabilities
+
+For example:
 
 ```text
-High Value
-Not High Value
+Customer A → 0.82
+Customer B → 0.31
+Customer C → 0.67
 ```
 
-But you would lose information.
-
-Your regression approach retains:
-
-```text
-Predicted = 420,000 VND
-Predicted = 380,000 VND
-Predicted = 250,000 VND
-Predicted = 150,000 VND
-```
-
-Then you can convert those predictions into a business classification when necessary.
-
-So your project answers **two questions**:
-
-### Analytical question
-
-> What predicts transaction value?
-
-### Business question
-
-> Which future transactions are likely to be high-value?
+These can support prioritization.
 
 ---
 
-# 22. Evaluate the high-value classification
+# 22. Evaluate Logistic Regression
 
-After predicting the test set, create:
-
-```text
-Actual high-value
-Predicted high-value
-```
-
-Then calculate:
+Use classification metrics:
 
 * Confusion matrix
 * Accuracy
 * Precision
 * Recall
-* F1 score
+* F1-score
+* ROC-AUC
 
-This tells you whether your regression model is actually useful for the **high-value targeting task**.
+These are **not directly compared with the RMSE/R² of MLR and Decision Tree**, because Logistic Regression has a different target.
 
----
-
-# 23. Stage 11 — Business recommendations
-
-Your recommendations should come from the final model.
-
-For example, if the model shows that certain customer segments consistently have higher predicted basket values:
-
-> Prioritize these segments for targeted retention and upselling campaigns.
-
-If service type is important:
-
-> Develop service-specific strategies rather than treating Food and Mart customers identically.
-
-If time is important:
-
-> Concentrate marketing resources during periods associated with higher predicted transaction values.
-
-If promotions matter:
-
-> Evaluate which promotion types are associated with higher-value orders rather than assuming that larger discounts generate larger baskets.
-
-The recommendations should be tied directly to your model results.
+Instead, it is evaluated according to its ability to identify high-value transactions.
 
 ---
 
-# 24. Your entire project in one flow
+# 23. Your three models are complementary
+
+This is an important change from your original approach.
+
+The models **do not feed into one another**.
+
+They are three independent models using the same underlying transaction data:
+
+```text
+                  Grab transaction data
+                           │
+              ┌────────────┼────────────┐
+              ↓            ↓            ↓
+            MLR      Decision Tree   Logistic
+              │            │            │
+              ↓            ↓            ↓
+       Basket value    Value rules    High-value
+       relationships   & segments     probability
+              │            │            │
+              └────────────┼────────────┘
+                           ↓
+                  Combined insights
+                           ↓
+                  Business actions
+```
+
+This is important because you're not trying to create a complicated ensemble system.
+
+Instead, each model answers a **different analytical question**.
+
+---
+
+# 24. The role of each model
+
+### MLR
+
+**Explain**
+
+> What factors are associated with transaction value?
+
+### Decision Tree
+
+**Segment**
+
+> What combinations of characteristics identify different transaction-value groups?
+
+### Logistic Regression
+
+**Target**
+
+> Which transactions are most likely to be high-value?
+
+Together:
+
+> **Explain → Segment → Target**
+
+This is a much stronger business-oriented story.
+
+---
+
+# 25. Model comparison framework
+
+You now have **two types of comparison**.
+
+### Direct predictive comparison
+
+MLR vs Decision Tree:
+
+```text
+RMSE
+MAE
+R²
+```
+
+Both predict the same continuous outcome.
+
+### Complementary classification analysis
+
+Logistic Regression:
+
+```text
+Accuracy
+Precision
+Recall
+F1
+ROC-AUC
+```
+
+It predicts a different binary outcome.
+
+Therefore, you should **not try to declare one model the overall winner**.
+
+Instead, select the model that is most appropriate for each business purpose.
+
+---
+
+# 26. Actionable insights
+
+This is where your revised approach is strongest.
+
+Imagine your results show:
+
+### MLR
+
+```text
+Distance → positive association
+Service type → significant
+Customer segment → significant
+```
+
+### Decision Tree
+
+```text
+Distance > X km
++
+Service Type A
++
+Customer Segment B
+        ↓
+Higher predicted basket value
+```
+
+### Logistic Regression
+
+```text
+Service Type A
++
+Customer Segment B
+        ↓
+Higher probability of high-value transaction
+```
+
+Now the models provide **converging evidence**.
+
+You can translate that into:
+
+> Prioritize customers and transaction profiles matching the identified characteristics for targeted marketing or upselling initiatives.
+
+This is much more actionable than simply reporting model accuracy.
+
+---
+
+# 27. Final project flow
 
 ```text
 BUSINESS PROBLEM
        ↓
-Why does identifying high-value
-transactions matter to Grab?
+Why identify high-value transactions?
        ↓
 DATA PREPROCESSING
        ↓
 Duplicates
 Missing values
 Data types
-Distance anomalies
+Distance cleaning
 Time variables
        ↓
 EDA
        ↓
-4 high-quality ggplot2 visualizations
+4 ggplot2 visualizations
        ↓
 TRAIN / TEST SPLIT
        ↓
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-MULTIPLE LINEAR REGRESSION
+MODEL 1: MLR
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
        ↓
 MLR 1 — Baseline
        ↓
-MLR 2 — + Order/Location/Operations
+MLR 2 — + Operations
        ↓
 MLR 3 — + Time
        ↓
@@ -893,51 +910,65 @@ Compare RMSE / MAE / R²
        ↓
 Select Best MLR
        ↓
-Regression diagnostics
+Diagnostics
        ↓
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-RANDOM FOREST REGRESSION
+MODEL 2: DECISION TREE
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
        ↓
-Train Random Forest
+Predict basket value
        ↓
-Variable importance
+Identify splits & thresholds
        ↓
-Test-set prediction
+Identify actionable segments
        ↓
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-MODEL COMPARISON
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-       ↓
-Best MLR vs Random Forest
-       ↓
-Select final model
+Compare with Best MLR
        ↓
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-BUSINESS THRESHOLD
+MODEL 3: LOGISTIC REGRESSION
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
        ↓
-Training 80th percentile
+Create high-value target
+(top 20%)
        ↓
-Predicted basket value
+Predict probability of
+high-value transaction
        ↓
-High-value vs standard
+Odds ratios
        ↓
-Precision / Recall / F1
+Confusion Matrix
+Precision / Recall / F1 / ROC-AUC
+       ↓
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SYNTHESIZE FINDINGS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       ↓
+Which factors matter?
+       ↓
+Which segments are valuable?
+       ↓
+Which transactions are likely
+to be high-value?
        ↓
 BUSINESS RECOMMENDATIONS
 ```
 
-## In simple terms
+## The simplest way to remember your project
 
-Your project has **three layers**:
+**MLR → Explain**
 
-**1. MLR** → *Explain what drives basket value.*
+> What drives basket value?
 
-**2. Random Forest** → *See whether a more advanced model can predict basket value better.*
+**Decision Tree → Segment**
 
-**3. Business threshold** → *Turn the predicted monetary value into a practical high-value targeting decision.*
+> What combinations of characteristics define higher-value transactions?
 
-And the **MLR Model 1 → 5 iterations** are simply how you systematically determine which groups of variables improve the MLR.
+**Logistic Regression → Target**
 
-That is the structure I would stick with for the rest of your project.
+> Which transactions are likely to be high-value?
+
+**Business recommendations → Act**
+
+> What should Grab do with those findings?
+
+I think this is a **more coherent final methodology for your stated priority of actionable insights** than the previous MLR + Random Forest structure.
