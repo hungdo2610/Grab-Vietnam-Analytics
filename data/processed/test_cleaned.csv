@@ -1,0 +1,185 @@
+"booking_id","customer_segment","service_type","customer_age","city","payment_method","booking_channel","distance_km_clean","estimated_duration_min","time_period","is_weekend","promo_code_used","discount_amount_vnd","traffic_level","weather_condition","basket_value_vnd"
+"GB2025000001","Working Professional","GrabFood",38,"Can Tho","Cash","Mobile App",4.91,15.4,"Early Morning","Weekday","WEEKEND",5000,"High","Cloudy",367000
+"GB2025000026","Family","GrabMart",19,"Hanoi","Cash","Mobile App",2,6.8,"Evening","Weekday","None",0,"High","Clear",57000
+"GB2025000029","Frequent User","GrabFood",43,"Hanoi","Cash","Mobile App",1.71,8.8,"Early Morning","Weekday","None",0,"Medium","Clear",181000
+"GB2025000049","Student","GrabMart",18,"Hanoi","Moca Wallet","Mobile App",5.67,29,"Night","Weekday","Unknown",0,"Medium","Cloudy",130000
+"GB2025000090","Corporate","GrabMart",54,"Hanoi","Card","Partner App",3.92,13.7,"Evening","Weekday","None",0,"Low","Rain",436000
+"GB2025000124","Family","GrabFood",48,"Bien Hoa","Cash","Mobile App",3.3,17.7,"Early Morning","Weekend","None",0,"Medium","Cloudy",217000
+"GB2025000158","Corporate","GrabFood",23,"Ho Chi Minh City","Moca Wallet","Partner App",2.43,9.8,"Early Morning","Weekday","None",0,"Medium","Clear",307000
+"GB2025000170","Frequent User","GrabMart",52,"Nha Trang","Cash","Mobile App",6.94,29.1,"Lunch","Weekday","WEEKEND",8000,"Low","Clear",123000
+"GB2025000181","Family","GrabFood",37,"Hue","Cash","Mobile App",2.14,10.9,"Night","Weekday","None",0,"High","Cloudy",321000
+"GB2025000201","Tourist","GrabMart",33,"Hanoi","Moca Wallet","Mobile App",3.63,10.8,"Lunch","Weekday","RIDE10",5000,"Low","Clear",94000
+"GB2025000211","Student","GrabFood",44,"Hai Phong","Moca Wallet","Mobile App",2.05,5.2,"Early Morning","Weekday","None",0,"Low","Cloudy",311000
+"GB2025000231","Frequent User","GrabMart",30,"Hai Phong","Cash","Web Booking",2.52,7.4,"Early Morning","Weekday","None",0,"Medium","Cloudy",254000
+"GB2025000256","Tourist","GrabMart",30,"Bien Hoa","Card","Mobile App",4.65,17.4,"Night","Weekend","None",0,"Medium","Clear",48000
+"GB2025000271","Family","GrabFood",41,"Ho Chi Minh City","Card","Mobile App",4.93,15.7,"Early Morning","Weekday","None",0,"Medium","Rain",370000
+"GB2025000283","Frequent User","GrabFood",41,"Hanoi","Moca Wallet","Mobile App",4.72,25,"Early Morning","Weekday","MART15",3000,"Medium","Clear",124000
+"GB2025000287","Frequent User","GrabMart",44,"Hanoi","Card","Web Booking",1.92,11.9,"Night","Weekday","LOYALTY",1000,"High","Cloudy",346000
+"GB2025000291","Working Professional","GrabMart",43,"Da Nang","Cash","Mobile App",5.41,20.7,"Morning","Weekend","WEEKEND",11000,"Medium","Heavy Rain",232000
+"GB2025000306","Student","GrabFood",27,"Ho Chi Minh City","Card","Mobile App",4.29,17.3,"Evening","Weekday","None",0,"High","Cloudy",164000
+"GB2025000417","Family","GrabFood",27,"Hanoi","Card","Partner App",4.15,15.5,"Evening","Weekday","WEEKEND",3000,"High","Rain",391000
+"GB2025000429","Family","GrabFood",36,"Ho Chi Minh City","Card","Mobile App",1.53,7.3,"Early Morning","Weekday","None",0,"Medium","Clear",118000
+"GB2025000445","Frequent User","GrabFood",21,"Hanoi","Moca Wallet","Mobile App",1.83,9,"Early Morning","Weekday","None",0,"Medium","Clear",283000
+"GB2025000458","Frequent User","GrabFood",45,"Da Nang","Cash","Mobile App",1.96,10.1,"Evening","Weekday","None",0,"High","Cloudy",141000
+"GB2025000463","Tourist","GrabFood",32,"Hue","Moca Wallet","Mobile App",3.06,10.1,"Evening","Weekday","None",0,"High","Clear",379000
+"GB2025000464","Family","GrabFood",30,"Ho Chi Minh City","Corporate Account","Mobile App",0.69,4.4,"Afternoon","Weekday","None",0,"High","Clear",4e+05
+"GB2025000467","Frequent User","GrabMart",41,"Ho Chi Minh City","Cash","Mobile App",1.29,5,"Lunch","Weekday","RIDE10",1000,"Low","Clear",136000
+"GB2025000479","Family","GrabMart",55,"Nha Trang","Card","Mobile App",1.69,5.3,"Early Morning","Weekday","WELCOME",1000,"High","Clear",414000
+"GB2025000488","Working Professional","GrabFood",60,"Ho Chi Minh City","Cash","Mobile App",6.53,28.4,"Lunch","Weekday","WELCOME",6000,"High","Clear",190000
+"GB2025000513","Student","GrabMart",27,"Hue","Moca Wallet","Partner App",1.43,5.3,"Lunch","Weekend","None",0,"Medium","Heavy Rain",406000
+"GB2025000525","Working Professional","GrabFood",59,"Hanoi","Card","Mobile App",0.92,3.5,"Evening","Weekday","None",0,"Low","Clear",242000
+"GB2025000543","Working Professional","GrabFood",39,"Ho Chi Minh City","Moca Wallet","Mobile App",0.86,3.1,"Early Morning","Weekday","None",0,"Low","Clear",429000
+"GB2025000550","Family","GrabFood",48,"Bien Hoa","Moca Wallet","Mobile App",5.06,23.2,"Afternoon","Weekday","None",0,"Low","Clear",323000
+"GB2025000562","Corporate","GrabFood",23,"Can Tho","Cash","Mobile App",1.27,7.8,"Afternoon","Weekend","RIDE10",3000,"High","Clear",361000
+"GB2025000585","Corporate","GrabFood",51,"Ho Chi Minh City","Cash","Partner App",8.4,19,"Evening","Weekday","None",0,"Low","Clear",125000
+"GB2025000683","Corporate","GrabFood",27,"Hai Phong","Cash","Mobile App",2.42,11.7,"Early Morning","Weekday","None",0,"Medium","Clear",103000
+"GB2025000787","Working Professional","GrabFood",31,"Da Nang","Moca Wallet","Mobile App",2.38,6.3,"Early Morning","Weekday","None",0,"Medium","Clear",411000
+"GB2025000804","Working Professional","GrabFood",28,"Ho Chi Minh City","Card","Mobile App",2.26,8.7,"Night","Weekday","None",0,"Low","Heavy Rain",306000
+"GB2025000822","Tourist","GrabFood",49,"Ho Chi Minh City","Card","Mobile App",3.12,13.4,"Early Morning","Weekend","WEEKEND",2000,"Medium","Clear",448000
+"GB2025000823","Working Professional","GrabFood",23,"Hanoi","Card","Mobile App",1.51,3.7,"Morning","Weekday","None",0,"Low","Heavy Rain",381000
+"GB2025000834","Family","GrabFood",49,"Ho Chi Minh City","Card","Mobile App",2.07,12.6,"Morning","Weekend","FOOD20",5000,"High","Heavy Rain",323000
+"GB2025000855","Working Professional","GrabMart",28,"Hanoi","Moca Wallet","Mobile App",2.16,13.3,"Night","Weekday","None",0,"High","Clear",108000
+"GB2025000910","Frequent User","GrabMart",24,"Ho Chi Minh City","Moca Wallet","Partner App",4.9,16.1,"Evening","Weekday","FOOD20",6000,"High","Clear",158000
+"GB2025000930","Frequent User","GrabFood",60,"Ho Chi Minh City","Card","Mobile App",1.81,6,"Afternoon","Weekday","RIDE10",4000,"Medium","Rain",191000
+"GB2025000945","Student","GrabFood",58,"Hue","Moca Wallet","Mobile App",11.78,30.4,"Early Morning","Weekend","WEEKEND",13000,"Low","Clear",380000
+"GB2025000946","Corporate","GrabFood",19,"Ho Chi Minh City","Moca Wallet","Mobile App",6.53,40.1,"Morning","Weekday","None",0,"High","Cloudy",260000
+"GB2025000947","Student","GrabFood",51,"Ho Chi Minh City","Cash","Mobile App",1.93,7.7,"Early Morning","Weekday","None",0,"High","Clear",410000
+"GB2025000951","Tourist","GrabFood",21,"Ho Chi Minh City","Card","Mobile App",2.87,6.9,"Lunch","Weekend","WEEKEND",4000,"Low","Clear",243000
+"GB2025000962","Tourist","GrabFood",22,"Hanoi","Moca Wallet","Mobile App",6.78,24.6,"Evening","Weekend","LOYALTY",4000,"Severe","Clear",205000
+"GB2025000988","Frequent User","GrabFood",56,"Hanoi","Cash","Mobile App",6.89,32.2,"Evening","Weekday","LOYALTY",10000,"Severe","Cloudy",213000
+"GB2025001011","Student","GrabMart",52,"Hanoi","Card","Mobile App",2.72,10.9,"Afternoon","Weekend","None",0,"Medium","Cloudy",128000
+"GB2025001082","Frequent User","GrabMart",39,"Ho Chi Minh City","Card","Mobile App",6.6,35.4,"Evening","Weekday","None",0,"High","Clear",322000
+"GB2025001101","Student","GrabFood",40,"Hanoi","Cash","Mobile App",6.45,18.9,"Lunch","Weekday","WELCOME",3000,"Low","Heavy Rain",139000
+"GB2025001139","Corporate","GrabFood",58,"Ho Chi Minh City","Moca Wallet","Mobile App",2.17,12.4,"Morning","Weekday","FOOD20",5000,"High","Cloudy",141000
+"GB2025001144","Student","GrabMart",34,"Can Tho","Cash","Mobile App",1.51,5.3,"Early Morning","Weekday","None",0,"Medium","Cloudy",261000
+"GB2025001155","Working Professional","GrabMart",54,"Ho Chi Minh City","Cash","Partner App",3.19,14.5,"Early Morning","Weekday","None",0,"Low","Cloudy",266000
+"GB2025001175","Student","GrabMart",33,"Hanoi","Cash","Mobile App",8.66,36.5,"Early Morning","Weekday","None",0,"Low","Clear",209000
+"GB2025001190","Tourist","GrabFood",24,"Bien Hoa","Card","Mobile App",4.9,21.3,"Afternoon","Weekday","LOYALTY",4000,"Medium","Unknown",404000
+"GB2025001220","Tourist","GrabFood",31,"Hanoi","Card","Mobile App",4.1,23.4,"Lunch","Weekday","None",0,"High","Rain",63000
+"GB2025001230","Working Professional","GrabFood",55,"Ho Chi Minh City","Cash","Mobile App",1.78,5.6,"Evening","Weekday","LOYALTY",2000,"High","Cloudy",406000
+"GB2025001278","Tourist","GrabFood",56,"Hanoi","Cash","Mobile App",6.02,42.8,"Early Morning","Weekday","FOOD20",9000,"Severe","Clear",354000
+"GB2025001296","Frequent User","GrabFood",36,"Ho Chi Minh City","Cash","Mobile App",7.53,33.3,"Morning","Weekend","RIDE10",12000,"Medium","Rain",120000
+"GB2025001298","Family","GrabMart",23,"Hue","Card","Mobile App",3.55,19.2,"Morning","Weekday","WEEKEND",5000,"High","Clear",254000
+"GB2025001324","Family","GrabFood",42,"Hanoi","Cash","Mobile App",3.12,5.6,"Morning","Weekday","LOYALTY",1000,"High","Clear",228000
+"GB2025001326","Tourist","GrabMart",61,"Hanoi","Card","Mobile App",2.31,13.9,"Morning","Weekday","WEEKEND",3000,"Severe","Rain",332000
+"GB2025001328","Corporate","GrabFood",19,"Hanoi","Cash","Mobile App",2.12,9.1,"Morning","Weekday","RIDE10",5000,"Medium","Rain",221000
+"GB2025001338","Working Professional","GrabFood",37,"Bien Hoa","Cash","Partner App",2.59,15.7,"Morning","Weekday","None",0,"High","Clear",283000
+"GB2025001350","Corporate","GrabFood",48,"Can Tho","Card","Partner App",2.08,12.4,"Morning","Weekend","None",0,"High","Cloudy",392000
+"GB2025001384","Frequent User","GrabFood",61,"Hanoi","Cash","Web Booking",1.91,5,"Early Morning","Weekday","None",0,"Low","Clear",153000
+"GB2025001397","Frequent User","GrabMart",61,"Hanoi","Card","Mobile App",4.06,21.6,"Afternoon","Weekday","WELCOME",6000,"Medium","Clear",334000
+"GB2025001403","Working Professional","GrabMart",27,"Ho Chi Minh City","Card","Mobile App",4.16,19.7,"Morning","Weekend","None",0,"Medium","Rain",323000
+"GB2025001408","Family","GrabMart",28,"Hai Phong","Card","Mobile App",3.59,14.5,"Early Morning","Weekend","FOOD20",3000,"Low","Clear",366000
+"GB2025001429","Family","GrabFood",18,"Ho Chi Minh City","Cash","Mobile App",1.74,9.5,"Evening","Weekday","None",0,"Unknown","Clear",386000
+"GB2025001438","Corporate","GrabFood",36,"Ho Chi Minh City","Card","Mobile App",2.08,7.4,"Early Morning","Weekday","None",0,"Medium","Clear",253000
+"GB2025001452","Family","GrabFood",45,"Hanoi","Moca Wallet","Mobile App",3.08,11.5,"Evening","Weekend","None",0,"High","Clear",56000
+"GB2025001476","Frequent User","GrabFood",54,"Ho Chi Minh City","Corporate Account","Mobile App",3.38,12,"Afternoon","Weekday","None",0,"Low","Rain",302000
+"GB2025001522","Corporate","GrabFood",45,"Hanoi","Card","Mobile App",0.55,2,"Early Morning","Weekday","None",0,"High","Cloudy",218000
+"GB2025001541","Tourist","GrabMart",55,"Ho Chi Minh City","Moca Wallet","Mobile App",2.35,12.2,"Early Morning","Weekend","None",0,"Medium","Clear",363000
+"GB2025001578","Family","GrabFood",46,"Da Nang","Cash","Partner App",2.16,7.4,"Evening","Weekend","None",0,"Medium","Rain",287000
+"GB2025001583","Student","GrabFood",24,"Can Tho","Card","Mobile App",3.03,13.1,"Afternoon","Weekday","WEEKEND",4000,"Low","Cloudy",372000
+"GB2025001587","Family","GrabFood",41,"Da Nang","Cash","Mobile App",3.38,14,"Morning","Weekday","None",0,"Medium","Cloudy",263000
+"GB2025001601","Frequent User","GrabFood",48,"Bien Hoa","Card","Mobile App",9.11,34.9,"Afternoon","Weekend","FOOD20",4000,"Low","Clear",194000
+"GB2025001617","Corporate","GrabMart",50,"Hanoi","Card","Mobile App",2.92,13.4,"Evening","Weekday","LOYALTY",3000,"Severe","Heavy Rain",362000
+"GB2025001622","Corporate","GrabFood",19,"Nha Trang","Card","Mobile App",3.1,13.5,"Afternoon","Weekday","WELCOME",4000,"Medium","Heavy Rain",180000
+"GB2025001680","Frequent User","GrabFood",30,"Nha Trang","Cash","Mobile App",2.98,9.1,"Early Morning","Weekday","None",0,"High","Clear",340000
+"GB2025001716","Corporate","GrabFood",52,"Ho Chi Minh City","Cash","Mobile App",2.15,4.8,"Night","Weekday","LOYALTY",3000,"Low","Clear",247000
+"GB2025001724","Family","GrabMart",46,"Hai Phong","Card","Mobile App",3.66,27.8,"Morning","Weekend","FOOD20",6000,"Severe","Clear",346000
+"GB2025001735","Corporate","GrabMart",21,"Da Nang","Cash","Mobile App",1.4,6.2,"Night","Weekday","LOYALTY",1000,"Low","Rain",295000
+"GB2025001788","Family","GrabFood",28,"Da Nang","Card","Mobile App",1.59,5.2,"Afternoon","Weekend","LOYALTY",3000,"Low","Clear",425000
+"GB2025001811","Tourist","GrabFood",30,"Da Nang","Moca Wallet","Mobile App",1.37,5.5,"Lunch","Weekday","MART15",3000,"High","Clear",278000
+"GB2025001846","Corporate","GrabFood",50,"Ho Chi Minh City","Cash","Mobile App",2.06,11.4,"Evening","Weekday","None",0,"High","Cloudy",392000
+"GB2025001854","Corporate","GrabFood",22,"Ho Chi Minh City","Card","Mobile App",2.91,11.5,"Lunch","Weekend","WEEKEND",2000,"High","Clear",68000
+"GB2025001877","Frequent User","GrabFood",37,"Da Nang","Corporate Account","Mobile App",2.24,11.4,"Early Morning","Weekend","None",0,"Medium","Clear",141000
+"GB2025001883","Working Professional","GrabFood",54,"Ho Chi Minh City","Corporate Account","Mobile App",3.04,21,"Afternoon","Weekday","None",0,"Severe","Clear",2e+05
+"GB2025001901","Working Professional","GrabFood",22,"Ho Chi Minh City","Moca Wallet","Mobile App",5.54,17.4,"Evening","Weekday","WELCOME",4000,"High","Clear",318000
+"GB2025001915","Family","GrabFood",32,"Ho Chi Minh City","Card","Mobile App",3.18,14.8,"Early Morning","Weekday","WEEKEND",3000,"Medium","Clear",89000
+"GB2025001921","Tourist","GrabFood",31,"Can Tho","Cash","Mobile App",3.3,12,"Early Morning","Weekday","None",0,"Low","Clear",217000
+"GB2025001931","Corporate","GrabFood",28,"Hanoi","Cash","Mobile App",2.33,10,"Evening","Weekend","None",0,"Medium","Cloudy",130000
+"GB2025001995","Working Professional","GrabFood",43,"Hanoi","Card","Mobile App",7.87,28.8,"Afternoon","Weekend","WELCOME",11000,"Medium","Cloudy",368000
+"GB2025001996","Corporate","GrabFood",20,"Da Nang","Cash","Mobile App",6.38,21.2,"Afternoon","Weekday","WEEKEND",10000,"Low","Cloudy",91000
+"GB2025002005","Frequent User","GrabFood",45,"Ho Chi Minh City","Cash","Mobile App",1.95,4.9,"Morning","Weekday","None",0,"Low","Cloudy",261000
+"GB2025002061","Corporate","GrabMart",60,"Can Tho","Card","Mobile App",0.99,2.8,"Morning","Weekend","None",0,"Medium","Clear",48000
+"GB2025002066","Frequent User","GrabFood",29,"Hue","Cash","Mobile App",7.87,21.8,"Morning","Weekday","Unknown",8000,"Low","Cloudy",125000
+"GB2025002086","Tourist","GrabFood",57,"Ho Chi Minh City","Corporate Account","Mobile App",3.36,13.5,"Afternoon","Weekend","None",0,"Low","Clear",48000
+"GB2025002124","Family","GrabFood",40,"Nha Trang","Moca Wallet","Mobile App",3.83,14.1,"Evening","Weekday","LOYALTY",3000,"Low","Cloudy",394000
+"GB2025002174","Tourist","GrabFood",41,"Da Nang","Moca Wallet","Mobile App",1.62,4.6,"Early Morning","Weekday","None",0,"Low","Rain",65000
+"GB2025002213","Working Professional","GrabFood",57,"Ho Chi Minh City","Cash","Mobile App",3.15,10.2,"Early Morning","Weekday","WELCOME",4000,"Low","Clear",125000
+"GB2025002221","Family","GrabMart",28,"Nha Trang","Cash","Web Booking",1.05,3.2,"Lunch","Weekday","WEEKEND",2000,"Low","Clear",303000
+"GB2025002229","Working Professional","GrabFood",45,"Ho Chi Minh City","Card","Mobile App",5.57,30.9,"Morning","Weekend","None",0,"High","Cloudy",383000
+"GB2025002233","Frequent User","GrabFood",44,"Hanoi","Moca Wallet","Mobile App",2.51,8.6,"Early Morning","Weekday","LOYALTY",3000,"Low","Cloudy",291000
+"GB2025002235","Frequent User","GrabFood",62,"Bien Hoa","Card","Partner App",1.15,4.5,"Morning","Weekday","WELCOME",4000,"High","Cloudy",115000
+"GB2025002244","Family","GrabFood",52,"Hanoi","Moca Wallet","Mobile App",2.08,8.5,"Morning","Weekday","None",0,"High","Clear",291000
+"GB2025002261","Tourist","GrabFood",20,"Can Tho","Cash","Mobile App",1.82,5.6,"Early Morning","Weekday","None",0,"High","Clear",278000
+"GB2025002279","Corporate","GrabFood",27,"Hai Phong","Moca Wallet","Mobile App",4.31,20.9,"Lunch","Weekday","RIDE10",7000,"Medium","Rain",272000
+"GB2025002299","Tourist","GrabFood",20,"Hai Phong","Card","Mobile App",4.38,30.6,"Afternoon","Weekend","None",0,"Severe","Clear",237000
+"GB2025002300","Corporate","GrabFood",62,"Bien Hoa","Cash","Mobile App",2.92,7.3,"Early Morning","Weekend","None",0,"Low","Clear",434000
+"GB2025002312","Tourist","GrabFood",24,"Can Tho","Card","Mobile App",2.73,19.9,"Morning","Weekday","None",0,"Severe","Clear",94000
+"GB2025002365","Tourist","GrabMart",18,"Hanoi","Cash","Mobile App",5.01,17,"Afternoon","Weekend","None",0,"Low","Clear",450000
+"GB2025002376","Student","GrabFood",25,"Hue","Card","Mobile App",1.09,4.7,"Early Morning","Weekday","WELCOME",1000,"Low","Rain",204000
+"GB2025002411","Working Professional","GrabFood",55,"Da Nang","Card","Mobile App",3.3,15.6,"Evening","Weekday","None",0,"Medium","Cloudy",381000
+"GB2025002424","Student","GrabFood",29,"Bien Hoa","Moca Wallet","Mobile App",2.9,9.9,"Afternoon","Weekend","None",0,"Medium","Clear",346000
+"GB2025002431","Family","GrabFood",53,"Da Nang","Cash","Mobile App",3.12,17,"Early Morning","Weekend","LOYALTY",4000,"Low","Rain",104000
+"GB2025002438","Family","GrabFood",42,"Hanoi","Moca Wallet","Mobile App",1,6.4,"Morning","Weekend","None",0,"Severe","Cloudy",131000
+"GB2025002452","Tourist","GrabFood",46,"Hanoi","Card","Partner App",3.49,13.4,"Evening","Weekend","None",0,"Medium","Cloudy",182000
+"GB2025002478","Tourist","GrabFood",29,"Da Nang","Card","Mobile App",0.86,3.8,"Afternoon","Weekday","LOYALTY",3000,"Medium","Cloudy",55000
+"GB2025002482","Corporate","GrabMart",58,"Hanoi","Cash","Mobile App",3.12,14.9,"Lunch","Weekday","None",0,"High","Cloudy",115000
+"GB2025002500","Student","GrabFood",60,"Hai Phong","Moca Wallet","Mobile App",1.24,3.5,"Morning","Weekday","None",0,"Low","Clear",98000
+"GB2025002523","Corporate","GrabMart",55,"Da Nang","Cash","Mobile App",3.12,4.1,"Morning","Weekday","RIDE10",1000,"Medium","Clear",335000
+"GB2025002590","Family","GrabFood",41,"Bien Hoa","Corporate Account","Mobile App",3.12,8.3,"Night","Weekend","None",0,"Low","Cloudy",433000
+"GB2025002635","Student","GrabFood",54,"Da Nang","Unknown","Mobile App",2.88,7.9,"Lunch","Weekday","None",0,"Medium","Cloudy",118000
+"GB2025002647","Student","GrabFood",27,"Bien Hoa","Card","Mobile App",5.88,34.7,"Morning","Weekend","None",0,"Severe","Cloudy",150000
+"GB2025002656","Family","GrabFood",48,"Hai Phong","Card","Mobile App",4.55,25.9,"Early Morning","Weekend","RIDE10",3000,"Severe","Rain",72000
+"GB2025002684","Student","GrabFood",36,"Hanoi","Card","Partner App",2.63,9.9,"Night","Weekday","None",0,"Medium","Rain",162000
+"GB2025002685","Family","GrabFood",61,"Can Tho","Cash","Mobile App",1.04,5,"Evening","Weekend","RIDE10",1000,"Low","Clear",60000
+"GB2025002686","Frequent User","GrabMart",60,"Ho Chi Minh City","Card","Mobile App",2.23,6.1,"Evening","Weekday","None",0,"Medium","Unknown",263000
+"GB2025002687","Corporate","GrabFood",29,"Ho Chi Minh City","Cash","Mobile App",10.22,34.7,"Afternoon","Weekday","None",0,"High","Clear",178000
+"GB2025002688","Working Professional","GrabFood",58,"Can Tho","Card","Mobile App",4.81,22.9,"Early Morning","Weekday","None",0,"Low","Rain",179000
+"GB2025002696","Corporate","GrabFood",51,"Ho Chi Minh City","Moca Wallet","Mobile App",3.65,13.9,"Evening","Weekend","None",0,"High","Cloudy",230000
+"GB2025002698","Student","GrabFood",40,"Hanoi","Cash","Mobile App",3.5,18.1,"Early Morning","Weekday","None",0,"Medium","Cloudy",215000
+"GB2025002706","Frequent User","GrabFood",38,"Can Tho","Cash","Mobile App",3.68,15.5,"Early Morning","Weekday","LOYALTY",2000,"Low","Clear",131000
+"GB2025002711","Family","GrabFood",61,"Ho Chi Minh City","Cash","Mobile App",2.27,5.2,"Night","Weekend","FOOD20",3000,"Low","Clear",234000
+"GB2025002727","Frequent User","GrabFood",22,"Hanoi","Card","Mobile App",3.12,6.3,"Early Morning","Weekday","WEEKEND",2000,"Low","Cloudy",118000
+"GB2025002730","Corporate","GrabFood",45,"Hai Phong","Corporate Account","Mobile App",3.43,13.3,"Afternoon","Weekday","WELCOME",2000,"Medium","Clear",167000
+"GB2025002736","Tourist","GrabFood",34,"Ho Chi Minh City","Moca Wallet","Mobile App",2.15,8.5,"Evening","Weekday","None",0,"Unknown","Rain",130000
+"GB2025002750","Frequent User","GrabFood",53,"Da Nang","Cash","Mobile App",1.63,5.8,"Morning","Weekend","None",0,"Low","Unknown",238000
+"GB2025002760","Family","GrabFood",29,"Hai Phong","Cash","Mobile App",1.6,9,"Early Morning","Weekday","None",0,"High","Rain",211000
+"GB2025002766","Corporate","GrabMart",26,"Ho Chi Minh City","Moca Wallet","Mobile App",1.76,8.5,"Lunch","Weekday","None",0,"Medium","Clear",402000
+"GB2025002808","Frequent User","GrabFood",61,"Ho Chi Minh City","Cash","Mobile App",1.7,4.5,"Night","Weekday","RIDE10",2000,"Medium","Clear",231000
+"GB2025002825","Student","GrabFood",26,"Can Tho","Corporate Account","Mobile App",11.28,50.9,"Night","Weekday","None",0,"Medium","Unknown",347000
+"GB2025002853","Corporate","GrabFood",50,"Ho Chi Minh City","Card","Mobile App",1.7,3.8,"Early Morning","Weekday","None",0,"Low","Clear",213000
+"GB2025002855","Student","GrabMart",26,"Hanoi","Card","Mobile App",4.6,21.5,"Early Morning","Weekday","None",0,"Medium","Rain",101000
+"GB2025002877","Student","GrabFood",51,"Hanoi","Card","Mobile App",2.51,10.3,"Evening","Weekday","FOOD20",3000,"Medium","Rain",372000
+"GB2025002910","Tourist","GrabMart",21,"Ho Chi Minh City","Cash","Mobile App",1.68,7.4,"Morning","Weekend","None",0,"Severe","Cloudy",114000
+"GB2025002915","Working Professional","GrabMart",28,"Can Tho","Card","Mobile App",3.38,13.7,"Night","Weekday","None",0,"High","Clear",378000
+"GB2025002921","Working Professional","GrabMart",59,"Ho Chi Minh City","Cash","Mobile App",2.89,19.5,"Evening","Weekday","None",0,"Severe","Clear",208000
+"GB2025002980","Family","GrabFood",51,"Da Nang","Card","Mobile App",2.71,9.9,"Afternoon","Weekday","FOOD20",2000,"High","Rain",89000
+"GB2025002999","Corporate","GrabFood",41,"Hanoi","Moca Wallet","Mobile App",1.21,4.2,"Early Morning","Weekday","None",0,"Low","Rain",62000
+"GB2025003000","Frequent User","GrabFood",45,"Hai Phong","Moca Wallet","Mobile App",1.41,4.2,"Early Morning","Weekday","None",0,"Low","Clear",378000
+"GB2025003001","Frequent User","GrabFood",36,"Can Tho","Cash","Mobile App",3.93,19.3,"Night","Weekend","None",0,"Unknown","Unknown",140000
+"GB2025003002","Tourist","GrabFood",47,"Ho Chi Minh City","Cash","Mobile App",7.76,34.6,"Afternoon","Weekday","LOYALTY",9000,"Low","Cloudy",96000
+"GB2025003004","Student","GrabFood",21,"Hanoi","Cash","Mobile App",2.87,17.7,"Morning","Weekend","None",0,"High","Cloudy",146000
+"GB2025003025","Family","GrabFood",56,"Da Nang","Moca Wallet","Mobile App",2.97,13.6,"Lunch","Weekday","WELCOME",5000,"Unknown","Rain",329000
+"GB2025003114","Frequent User","GrabMart",57,"Can Tho","Card","Mobile App",3.3,19.5,"Early Morning","Weekday","None",0,"High","Clear",388000
+"GB2025003118","Working Professional","GrabMart",53,"Bien Hoa","Unknown","Mobile App",2.19,8.9,"Afternoon","Weekday","WELCOME",5000,"Medium","Clear",259000
+"GB2025003141","Family","GrabFood",30,"Hanoi","Card","Mobile App",1.45,7.7,"Evening","Weekday","WELCOME",4000,"High","Clear",286000
+"GB2025003164","Working Professional","GrabFood",44,"Ho Chi Minh City","Card","Mobile App",1.99,11.6,"Early Morning","Weekend","None",0,"High","Clear",198000
+"GB2025003169","Corporate","GrabMart",30,"Ho Chi Minh City","Card","Mobile App",5.01,19.9,"Morning","Weekday","RIDE10",4000,"Medium","Rain",401000
+"GB2025003187","Corporate","GrabFood",24,"Ho Chi Minh City","Corporate Account","Mobile App",4.11,13.7,"Afternoon","Weekend","WEEKEND",2000,"Medium","Clear",210000
+"GB2025003188","Frequent User","GrabFood",21,"Hanoi","Card","Mobile App",5.11,16.4,"Early Morning","Weekend","WELCOME",3000,"Medium","Clear",357000
+"GB2025003199","Corporate","GrabFood",30,"Can Tho","Moca Wallet","Mobile App",3.41,17.5,"Night","Weekday","None",0,"Medium","Cloudy",159000
+"GB2025003201","Tourist","GrabFood",46,"Hai Phong","Card","Mobile App",5.06,25.8,"Night","Weekend","RIDE10",8000,"High","Rain",358000
+"GB2025003214","Student","GrabFood",41,"Hanoi","Cash","Mobile App",1.65,6.7,"Morning","Weekday","WELCOME",1000,"Low","Clear",446000
+"GB2025003219","Corporate","GrabMart",44,"Hai Phong","Card","Mobile App",8.28,32.9,"Lunch","Weekend","None",0,"Medium","Clear",317000
+"GB2025003251","Corporate","GrabMart",44,"Ho Chi Minh City","Card","Partner App",4.78,20.6,"Evening","Weekday","LOYALTY",2000,"Medium","Heavy Rain",62000
+"GB2025003252","Working Professional","GrabFood",57,"Ho Chi Minh City","Moca Wallet","Mobile App",9.28,21.2,"Early Morning","Weekday","None",0,"Low","Rain",404000
+"GB2025003276","Tourist","GrabFood",52,"Da Nang","Cash","Mobile App",1.71,3.9,"Lunch","Weekday","None",0,"Low","Clear",152000
+"GB2025003307","Family","GrabFood",47,"Hai Phong","Cash","Mobile App",2.23,5.3,"Early Morning","Weekday","WEEKEND",4000,"Low","Clear",75000
+"GB2025003324","Working Professional","GrabFood",22,"Hai Phong","Cash","Mobile App",3.08,16.1,"Morning","Weekday","FOOD20",4000,"High","Clear",261000
+"GB2025003325","Frequent User","GrabFood",41,"Can Tho","Moca Wallet","Mobile App",6.83,43.9,"Evening","Weekday","WELCOME",6000,"Severe","Cloudy",269000
+"GB2025003357","Working Professional","GrabFood",39,"Hai Phong","Card","Mobile App",3.43,11.3,"Lunch","Weekday","WEEKEND",3000,"Medium","Clear",406000
+"GB2025003394","Family","GrabFood",30,"Hai Phong","Cash","Mobile App",2.5,8.8,"Early Morning","Weekend","LOYALTY",1000,"Low","Clear",169000
+"GB2025003400","Frequent User","GrabFood",40,"Hue","Moca Wallet","Mobile App",3.62,11.8,"Afternoon","Weekday","FOOD20",2000,"Low","Rain",213000
+"GB2025003411","Working Professional","GrabMart",49,"Da Nang","Card","Partner App",1.25,4.2,"Lunch","Weekday","None",0,"Medium","Rain",399000
+"GB2025003414","Family","GrabFood",41,"Da Nang","Moca Wallet","Mobile App",3.33,16.9,"Early Morning","Weekday","None",0,"Medium","Clear",301000
+"GB2025003434","Corporate","GrabFood",54,"Hanoi","Card","Mobile App",4.7,17.7,"Early Morning","Weekday","LOYALTY",4000,"Low","Clear",301000
+"GB2025003458","Student","GrabFood",45,"Bien Hoa","Card","Mobile App",3.83,20.2,"Lunch","Weekend","WEEKEND",5000,"Medium","Clear",4e+05

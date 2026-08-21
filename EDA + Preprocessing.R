@@ -159,7 +159,143 @@ lapply(
 )
 
 # ============================================================
-# 5.4 MISSINGNESS HEATMAP
+# 5.4 CATEGORICAL VALUE CONSISTENCY CHECK
+# ============================================================
+
+categorical_vars <- c(
+  "customer_segment",
+  "service_type",
+  "city",
+  "payment_method",
+  "booking_channel",
+  "promo_code_used",
+  "traffic_level",
+  "weather_condition"
+)
+
+
+# ------------------------------------------------------------
+# Check unique values before cleaning
+# ------------------------------------------------------------
+
+categorical_unique_values <- lapply(
+  basket[categorical_vars],
+  function(x) {
+    sort(
+      unique(
+        as.character(x)
+      )
+    )
+  }
+)
+
+categorical_unique_values
+
+
+# ------------------------------------------------------------
+# Check for leading/trailing whitespace
+# ------------------------------------------------------------
+
+whitespace_check <- lapply(
+  basket[categorical_vars],
+  function(x) {
+    
+    x <- as.character(x)
+    
+    x[
+      !is.na(x) &
+        x != str_trim(x)
+    ]
+  }
+)
+
+whitespace_check
+
+
+# ------------------------------------------------------------
+# Remove leading/trailing whitespace
+# ------------------------------------------------------------
+
+basket <- basket %>%
+  mutate(
+    across(
+      all_of(categorical_vars),
+      ~ str_trim(as.character(.x))
+    )
+  )
+
+
+# ------------------------------------------------------------
+# Check for empty strings
+# ------------------------------------------------------------
+
+empty_string_check <- lapply(
+  basket[categorical_vars],
+  function(x) {
+    
+    x[
+      !is.na(x) &
+        x == ""
+    ]
+  }
+)
+
+empty_string_check
+
+
+# ------------------------------------------------------------
+# Convert empty strings to NA
+# ------------------------------------------------------------
+
+basket <- basket %>%
+  mutate(
+    across(
+      all_of(categorical_vars),
+      ~ na_if(.x, "")
+    )
+  )
+
+
+# ------------------------------------------------------------
+# Re-check unique values after cleaning
+# ------------------------------------------------------------
+
+categorical_unique_values_clean <- lapply(
+  basket[categorical_vars],
+  function(x) {
+    sort(
+      unique(
+        as.character(x)
+      )
+    )
+  }
+)
+
+categorical_unique_values_clean
+
+# ============================================================
+# 5.5 REVIEW CATEGORICAL LEVELS FOR SPELLING / TYPO ERRORS
+# ============================================================
+
+for (var in categorical_vars) {
+  
+  cat("\n====================================\n")
+  cat("VARIABLE:", var, "\n")
+  cat("====================================\n")
+  
+  print(
+    sort(
+      table(
+        basket[[var]],
+        useNA = "ifany"
+      ),
+      decreasing = TRUE
+    )
+  )
+}
+
+# ============================================================
+# 5.6 MISSINGNESS HEATMAP
 # ============================================================
 
 # ------------------------------------------------------------
@@ -170,27 +306,27 @@ lapply(
 
 analysis_vars <- c(
   
-
+  
   "customer_segment",
   "service_type",
   "customer_age",
   
-
+  
   "city",
   "payment_method",
   "booking_channel",
   "distance_km",
   "estimated_duration_min",
   
-
+  
   "promo_code_used",
   "discount_amount_vnd",
   
-
+  
   "traffic_level",
   "weather_condition",
   
-
+  
   "basket_value_vnd"
 )
 
@@ -465,38 +601,33 @@ ggsave(
   dpi = 300
 )
 
-
-# ============================================================
-# 5.5 MISSINGNESS IMPACT ASSESSMENT
-# ============================================================
-
 # ------------------------------------------------------------
 # Variables included in the missingness assessment
 # ------------------------------------------------------------
 
 missing_analysis_vars <- c(
   
-
+  
   "customer_segment",
   "service_type",
   "customer_age",
   
-
+  
   "city",
   "payment_method",
   "booking_channel",
   "distance_km",
   "estimated_duration_min",
   
-
+  
   "promo_code_used",
   "discount_amount_vnd",
   
-
+  
   "traffic_level",
   "weather_condition",
   
-
+  
   "basket_value_vnd"
 )
 
@@ -790,90 +921,6 @@ categorical_difference <- categorical_missing_summary %>%
   )
 
 categorical_difference
-# ============================================================
-# 5.5.6 BASKET VALUE VISUAL COMPARISON
-# ============================================================
-
-missing_impact_plot <- ggplot(
-  basket,
-  aes(
-    x = has_missing,
-    y = basket_value_vnd
-  )
-) +
-  
-  geom_boxplot(
-    width = 0.55,
-    na.rm = TRUE
-  ) +
-  
-  labs(
-    title = "Basket Value by Missing Data Status",
-    subtitle = "Comparison of complete and incomplete observations",
-    x = "Data completeness",
-    y = "Basket value (VND)"
-  ) +
-  
-  theme_minimal() +
-  
-  theme(
-    
-    plot.title = element_text(
-      face = "bold",
-      size = 16,
-      family = "sans"
-    ),
-    
-    plot.subtitle = element_text(
-      size = 11,
-      family = "sans"
-    ),
-    
-    axis.title.x = element_text(
-      size = 11,
-      family = "sans"
-    ),
-    
-    axis.title.y = element_text(
-      size = 11,
-      family = "sans"
-    ),
-    
-    axis.text.x = element_text(
-      size = 10,
-      family = "sans"
-    ),
-    
-    axis.text.y = element_text(
-      size = 10,
-      family = "sans"
-    ),
-    
-    panel.grid.minor = element_blank(),
-    
-    plot.margin = ggplot2::margin(
-      t = 10,
-      r = 15,
-      b = 15,
-      l = 15
-    )
-  )
-
-
-missing_impact_plot
-
-
-# ============================================================
-# 5.5.7 SAVE VISUAL
-# ============================================================
-
-ggsave(
-  "figures/01_missingness_impact.png",
-  missing_impact_plot,
-  width = 10,
-  height = 7,
-  dpi = 300
-)
 
 # ============================================================
 # 6. CLEAN BOOKING DATETIME
@@ -1011,101 +1058,83 @@ basket <- basket %>%
     weather_condition = factor(weather_condition)
   )
 
+# ============================================================
+# 11. EXPLORATORY DATA ANALYSIS
+# ============================================================
+
 
 # ============================================================
-# 11. BASKET VALUE DESCRIPTIVE ANALYSIS
+# 11.1 TARGET VARIABLE: BASKET VALUE
 # ============================================================
 
+# ------------------------------------------------------------
+# Descriptive statistics
+# ------------------------------------------------------------
 
-# Summary by service type
-
-basket %>%
-  group_by(service_type) %>%
+basket_value_summary <- basket %>%
   summarise(
-    n = n(),
-    mean_basket = mean(
+    
+    n = sum(
+      !is.na(basket_value_vnd)
+    ),
+    
+    mean = mean(
       basket_value_vnd,
       na.rm = TRUE
     ),
-    median_basket = median(
+    
+    median = median(
       basket_value_vnd,
       na.rm = TRUE
     ),
-    sd_basket = sd(
+    
+    sd = sd(
       basket_value_vnd,
       na.rm = TRUE
     ),
-    minimum = min(
+    
+    min = min(
       basket_value_vnd,
       na.rm = TRUE
     ),
+    
     Q1 = quantile(
       basket_value_vnd,
       0.25,
       na.rm = TRUE
     ),
+    
     Q3 = quantile(
       basket_value_vnd,
       0.75,
       na.rm = TRUE
     ),
-    maximum = max(
+    
+    max = max(
       basket_value_vnd,
       na.rm = TRUE
     )
   )
 
 
-# ------------------------------------------------------------
-# 11.1 High-value threshold
-# ------------------------------------------------------------
-
-basket_threshold <- quantile(
-  basket$basket_value_vnd,
-  0.80,
-  na.rm = TRUE
-)
-
-basket_threshold
+basket_value_summary
 
 
-# ------------------------------------------------------------
-# 11.2 Skewness
-# ------------------------------------------------------------
+# ============================================================
+# 11.2 BASKET VALUE SKEWNESS
+# ============================================================
 
-basket_skewness <- skewness(
+basket_value_skewness <- skewness(
   basket$basket_value_vnd,
   na.rm = TRUE
 )
 
-basket_skewness
+basket_value_skewness
 
 
-# ------------------------------------------------------------
-# 11.3 Distribution
-# ------------------------------------------------------------
-
-ggplot(
-  basket,
-  aes(x = basket_value_vnd)
-) +
-  geom_histogram(bins = 30) +
-  geom_vline(
-    xintercept = basket_threshold,
-    linetype = "dashed"
-  ) +
-  labs(
-    title = "Distribution of Basket Value",
-    x = "Basket Value (VND)",
-    y = "Number of Orders",
-    subtitle = "Dashed line represents the 80th percentile"
-  ) +
-  theme_minimal()
-
-
-# ------------------------------------------------------------
-# 11.4 IQR and upper outlier boundary
-# ------------------------------------------------------------
+# ============================================================
+# 11.3 BASKET VALUE OUTLIER ASSESSMENT
+# ============================================================
 
 Q1_basket <- quantile(
   basket$basket_value_vnd,
@@ -1121,280 +1150,748 @@ Q3_basket <- quantile(
 
 IQR_basket <- Q3_basket - Q1_basket
 
-upper_basket <- Q3_basket + 1.5 * IQR_basket
+lower_basket <- Q1_basket -
+  1.5 * IQR_basket
 
+upper_basket <- Q3_basket +
+  1.5 * IQR_basket
+
+
+# Display IQR boundaries
+
+Q1_basket
+Q3_basket
 IQR_basket
-
+lower_basket
 upper_basket
 
 
-# ============================================================
-# 12. ADDITIONAL EDA VARIABLES
-# ============================================================
+# Count potential outliers
 
-
-# ------------------------------------------------------------
-# 12.1 Promo code
-# ------------------------------------------------------------
-
-table(
-  basket$promo_code_used,
-  useNA = "ifany"
-)
-
-basket %>%
-  group_by(promo_code_used) %>%
+basket_outlier_summary <- basket %>%
   summarise(
-    n = n(),
-    mean_basket = mean(
-      basket_value_vnd,
+    
+    lower_outliers = sum(
+      basket_value_vnd < lower_basket,
       na.rm = TRUE
     ),
-    median_basket = median(
-      basket_value_vnd,
+    
+    upper_outliers = sum(
+      basket_value_vnd > upper_basket,
       na.rm = TRUE
     ),
-    sd_basket = sd(
-      basket_value_vnd,
-      na.rm = TRUE
-    ),
-    minimum = min(
-      basket_value_vnd,
-      na.rm = TRUE
-    ),
-    Q1 = quantile(
-      basket_value_vnd,
-      0.25,
-      na.rm = TRUE
-    ),
-    Q3 = quantile(
-      basket_value_vnd,
-      0.75,
-      na.rm = TRUE
-    ),
-    maximum = max(
-      basket_value_vnd,
-      na.rm = TRUE
-    )
-  ) %>%
-  arrange(desc(mean_basket))
-
-
-# ------------------------------------------------------------
-# 12.2 Discount
-# ------------------------------------------------------------
-
-basket %>%
-  summarise(
-    n = sum(!is.na(discount_amount_vnd)),
-    missing = sum(is.na(discount_amount_vnd)),
-    mean_discount = mean(
-      discount_amount_vnd,
-      na.rm = TRUE
-    ),
-    median_discount = median(
-      discount_amount_vnd,
-      na.rm = TRUE
-    ),
-    sd_discount = sd(
-      discount_amount_vnd,
-      na.rm = TRUE
-    ),
-    minimum = min(
-      discount_amount_vnd,
-      na.rm = TRUE
-    ),
-    Q1 = quantile(
-      discount_amount_vnd,
-      0.25,
-      na.rm = TRUE
-    ),
-    Q3 = quantile(
-      discount_amount_vnd,
-      0.75,
-      na.rm = TRUE
-    ),
-    maximum = max(
-      discount_amount_vnd,
+    
+    total_outliers = sum(
+      basket_value_vnd < lower_basket |
+        basket_value_vnd > upper_basket,
       na.rm = TRUE
     )
   )
 
 
-# Relationship between discount and basket value
+basket_outlier_summary
 
-ggplot(
-  basket %>%
-    filter(
-      !is.na(discount_amount_vnd),
-      !is.na(basket_value_vnd)
-    ),
+
+# ============================================================
+# 11.4 BASKET VALUE DISTRIBUTION
+# ============================================================
+
+basket_histogram <- ggplot(
+  basket,
   aes(
-    x = discount_amount_vnd,
-    y = basket_value_vnd
+    x = basket_value_vnd
   )
 ) +
-  geom_point(alpha = 0.5) +
-  geom_smooth(
-    method = "lm",
-    se = TRUE
-  ) +
-  labs(
-    title = "Relationship Between Discount and Basket Value",
-    x = "Discount Amount (VND)",
-    y = "Basket Value (VND)"
-  ) +
-  theme_minimal()
-
-
-cor(
-  basket$discount_amount_vnd,
-  basket$basket_value_vnd,
-  use = "complete.obs"
-)
-
-
-# ------------------------------------------------------------
-# 12.3 Traffic level
-# ------------------------------------------------------------
-
-table(
-  basket$traffic_level,
-  useNA = "ifany"
-)
-
-basket %>%
-  group_by(traffic_level) %>%
-  summarise(
-    n = n(),
-    mean_basket = mean(
-      basket_value_vnd,
-      na.rm = TRUE
-    ),
-    median_basket = median(
-      basket_value_vnd,
-      na.rm = TRUE
-    ),
-    sd_basket = sd(
-      basket_value_vnd,
-      na.rm = TRUE
-    )
-  ) %>%
-  arrange(desc(mean_basket))
-
-
-ggplot(
-  basket %>%
-    filter(
-      !is.na(traffic_level),
-      !is.na(basket_value_vnd)
-    ),
-  aes(
-    x = traffic_level,
-    y = basket_value_vnd
-  )
-) +
-  geom_boxplot() +
-  labs(
-    title = "Basket Value by Traffic Level",
-    x = "Traffic Level",
-    y = "Basket Value (VND)"
-  ) +
-  theme_minimal()
-
-
-# ------------------------------------------------------------
-# 12.4 Weather condition
-# ------------------------------------------------------------
-
-table(
-  basket$weather_condition,
-  useNA = "ifany"
-)
-
-basket %>%
-  group_by(weather_condition) %>%
-  summarise(
-    n = n(),
-    mean_basket = mean(
-      basket_value_vnd,
-      na.rm = TRUE
-    ),
-    median_basket = median(
-      basket_value_vnd,
-      na.rm = TRUE
-    ),
-    sd_basket = sd(
-      basket_value_vnd,
-      na.rm = TRUE
-    )
-  ) %>%
-  arrange(desc(mean_basket))
-
-
-ggplot(
-  basket %>%
-    filter(
-      !is.na(weather_condition),
-      !is.na(basket_value_vnd)
-    ),
-  aes(
-    x = weather_condition,
-    y = basket_value_vnd
-  )
-) +
-  geom_boxplot() +
-  labs(
-    title = "Basket Value by Weather Condition",
-    x = "Weather Condition",
-    y = "Basket Value (VND)"
-  ) +
-  theme_minimal()
-
-
-# ============================================================
-# 13. CREATE MODEL DATASET
-# ============================================================
-
-model_variables <- c(
   
-  # Outcome
-  "basket_value_vnd",
+  geom_histogram(
+    bins = 30,
+    na.rm = TRUE
+  ) +
   
-  # Customer
-  "customer_segment",
+  labs(
+    title = "Distribution of Basket Value",
+    subtitle = "Basket value across GrabFood and GrabMart transactions",
+    x = "Basket Value (VND)",
+    y = "Number of Orders"
+  ) +
+  
+  scale_x_continuous(
+    labels = scales::label_number(
+      big.mark = ","
+    )
+  ) +
+  
+  theme_minimal(
+    base_size = 13
+  ) +
+  
+  theme(
+    
+    plot.title = element_text(
+      face = "bold",
+      size = 16,
+      family = "sans"
+    ),
+    
+    plot.subtitle = element_text(
+      size = 11,
+      family = "sans"
+    ),
+    
+    axis.title.x = element_text(
+      size = 11,
+      family = "sans"
+    ),
+    
+    axis.title.y = element_text(
+      size = 11,
+      family = "sans"
+    ),
+    
+    axis.text.x = element_text(
+      size = 10,
+      family = "sans"
+    ),
+    
+    axis.text.y = element_text(
+      size = 10,
+      family = "sans"
+    ),
+    
+    panel.grid.minor = element_blank(),
+    
+    plot.margin = ggplot2::margin(
+      t = 10,
+      r = 15,
+      b = 15,
+      l = 15
+    )
+  )
+
+
+basket_histogram
+
+
+# ------------------------------------------------------------
+# Save histogram
+# ------------------------------------------------------------
+
+ggsave(
+  "figures/01_basket_value_histogram.png",
+  basket_histogram,
+  width = 10,
+  height = 7,
+  dpi = 300
+)
+
+
+# ============================================================
+# 11.5 NUMERICAL PREDICTOR SUMMARY
+# ============================================================
+
+numerical_eda_vars <- c(
   "customer_age",
-  
-  # Service and booking
+  "distance_km",
+  "estimated_duration_min",
+  "discount_amount_vnd"
+)
+
+
+numerical_summary <- basket %>%
+  summarise(
+    across(
+      all_of(numerical_eda_vars),
+      list(
+        
+        mean = ~ mean(
+          .x,
+          na.rm = TRUE
+        ),
+        
+        median = ~ median(
+          .x,
+          na.rm = TRUE
+        ),
+        
+        sd = ~ sd(
+          .x,
+          na.rm = TRUE
+        ),
+        
+        min = ~ min(
+          .x,
+          na.rm = TRUE
+        ),
+        
+        max = ~ max(
+          .x,
+          na.rm = TRUE
+        )
+      ),
+      .names = "{.col}_{.fn}"
+    )
+  )
+
+
+numerical_summary
+
+
+# ============================================================
+# 11.6 CATEGORICAL PREDICTOR DISTRIBUTIONS
+# ============================================================
+
+
+
+categorical_eda_vars <- c(
+  "customer_segment",
   "service_type",
   "city",
   "payment_method",
   "booking_channel",
-  
-  # Operational
-  "distance_km_clean",
-  "estimated_duration_min",
-  
-  # Time
-  "time_period",
-  "is_weekend",
-  
-  # Promotion
   "promo_code_used",
-  "discount_amount_vnd",
-  
-  # Environment
   "traffic_level",
   "weather_condition"
 )
 
 
-model_data <- basket %>%
-  select(all_of(model_variables))
+categorical_summary <- basket %>%
+  select(
+    all_of(categorical_eda_vars)
+  ) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "variable",
+    values_to = "category"
+  ) %>%
+  group_by(
+    variable,
+    category
+  ) %>%
+  summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>%
+  group_by(
+    variable
+  ) %>%
+  mutate(
+    percentage =
+      n / sum(n) * 100
+  ) %>%
+  ungroup()
+
+
+categorical_summary
 
 
 # ============================================================
-# 14. TRAIN / TEST SPLIT
+# 11.7 NUMERICAL PREDICTOR RELATIONSHIPS
+# ============================================================
+
+
+numerical_relationships <- basket %>%
+  summarise(
+    
+    age_correlation = cor(
+      customer_age,
+      basket_value_vnd,
+      use = "complete.obs"
+    ),
+    
+    distance_correlation = cor(
+      distance_km,
+      basket_value_vnd,
+      use = "complete.obs"
+    ),
+    
+    duration_correlation = cor(
+      estimated_duration_min,
+      basket_value_vnd,
+      use = "complete.obs"
+    ),
+    
+    discount_correlation = cor(
+      discount_amount_vnd,
+      basket_value_vnd,
+      use = "complete.obs"
+    )
+  )
+
+
+numerical_relationships
+
+
+# ============================================================
+# 11.8 BASKET VALUE BY CATEGORICAL PREDICTORS
+# ============================================================
+
+categorical_basket_summary <- basket %>%
+  select(
+    all_of(categorical_eda_vars),
+    basket_value_vnd
+  ) %>%
+  pivot_longer(
+    cols = all_of(categorical_eda_vars),
+    names_to = "variable",
+    values_to = "category"
+  ) %>%
+  group_by(
+    variable,
+    category
+  ) %>%
+  summarise(
+    
+    n = n(),
+    
+    mean_basket_value =
+      mean(
+        basket_value_vnd,
+        na.rm = TRUE
+      ),
+    
+    median_basket_value =
+      median(
+        basket_value_vnd,
+        na.rm = TRUE
+      ),
+    
+    .groups = "drop"
+  ) %>%
+  arrange(
+    variable,
+    desc(mean_basket_value)
+  )
+
+
+categorical_basket_summary
+
+
+# ============================================================
+# 11.9 MISSINGNESS CHECK BEFORE MODELLING
+# ============================================================
+
+
+model_predictors_current <- c(
+  
+  # MLR 1
+  "customer_segment",
+  "service_type",
+  "customer_age",
+  
+  # MLR 2
+  "city",
+  "payment_method",
+  "booking_channel",
+  "distance_km",
+  "estimated_duration_min",
+  
+  # MLR 4
+  "promo_code_used",
+  "discount_amount_vnd",
+  
+  # MLR 5
+  "traffic_level",
+  "weather_condition"
+)
+
+
+model_missing_summary <- basket %>%
+  summarise(
+    across(
+      all_of(model_predictors_current),
+      ~ sum(is.na(.))
+    )
+  ) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "variable",
+    values_to = "missing"
+  ) %>%
+  mutate(
+    percentage =
+      missing / nrow(basket) * 100
+  ) %>%
+  arrange(
+    desc(missing)
+  )
+
+
+model_missing_summary
+
+
+# ============================================================
+# 11.10 FINAL EDA CHECK
+# ============================================================
+
+# Number of observations
+
+nrow(basket)
+
+
+# Number of unique bookings
+
+n_distinct(
+  basket$booking_id
+)
+
+
+# Service type distribution
+
+table(
+  basket$service_type,
+  useNA = "ifany"
+)
+
+
+# Basket value summary
+
+basket_value_summary
+
+
+# Basket value skewness
+
+basket_value_skewness
+
+
+# Basket value outlier summary
+
+basket_outlier_summary
+
+# ============================================================
+# 12. FEATURE ENGINEERING AND MODELLING PREPARATION
+# ============================================================
+
+
+# ============================================================
+# 12.1 CREATE TIME VARIABLES
+# ============================================================
+
+# Convert booking_datetime to POSIXct if necessary
+
+basket <- basket %>%
+  mutate(
+    booking_datetime = as.POSIXct(
+      booking_datetime
+    )
+  )
+
+
+# ------------------------------------------------------------
+# Create booking hour
+# ------------------------------------------------------------
+
+basket <- basket %>%
+  mutate(
+    booking_hour = hour(
+      booking_datetime
+    )
+  )
+
+
+# ------------------------------------------------------------
+# Create weekend indicator
+# ------------------------------------------------------------
+
+basket <- basket %>%
+  mutate(
+    is_weekend = ifelse(
+      weekdays(booking_datetime) %in%
+        c("Saturday", "Sunday"),
+      "Weekend",
+      "Weekday"
+    )
+  )
+
+
+# ------------------------------------------------------------
+# Create time period
+# ------------------------------------------------------------
+
+basket <- basket %>%
+  mutate(
+    time_period = case_when(
+      
+      booking_hour >= 0 &
+        booking_hour < 6 ~
+        "Early Morning",
+      
+      booking_hour >= 6 &
+        booking_hour < 11 ~
+        "Morning",
+      
+      booking_hour >= 11 &
+        booking_hour < 14 ~
+        "Lunch",
+      
+      booking_hour >= 14 &
+        booking_hour < 17 ~
+        "Afternoon",
+      
+      booking_hour >= 17 &
+        booking_hour < 21 ~
+        "Evening",
+      
+      booking_hour >= 21 &
+        booking_hour <= 23 ~
+        "Night"
+    )
+  )
+
+
+# Check feature engineering
+
+table(
+  basket$time_period,
+  useNA = "ifany"
+)
+
+table(
+  basket$is_weekend,
+  useNA = "ifany"
+)
+
+
+# ============================================================
+# 12.2 CHECK DISTANCE / DURATION PLAUSIBILITY
+# ============================================================
+
+# Estimated speed in km/h
+
+basket <- basket %>%
+  mutate(
+    estimated_speed_kmh =
+      distance_km /
+      estimated_duration_min *
+      60
+  )
+
+
+# Examine potentially implausible observations
+
+basket %>%
+  filter(
+    estimated_speed_kmh > 50
+  ) %>%
+  select(
+    booking_id,
+    distance_km,
+    estimated_duration_min,
+    estimated_speed_kmh
+  )
+
+
+# ============================================================
+# 12.3 CREATE CLEAN DISTANCE VARIABLE
+# ============================================================
+
+basket <- basket %>%
+  mutate(
+    distance_km_clean = ifelse(
+      estimated_speed_kmh > 50,
+      NA,
+      distance_km
+    )
+  )
+
+
+# Check the effect of cleaning
+
+distance_cleaning_summary <- basket %>%
+  summarise(
+    
+    original_missing =
+      sum(
+        is.na(distance_km)
+      ),
+    
+    cleaned_missing =
+      sum(
+        is.na(distance_km_clean)
+      ),
+    
+    newly_flagged =
+      sum(
+        is.na(distance_km_clean) &
+          !is.na(distance_km)
+      )
+  )
+
+
+distance_cleaning_summary
+
+
+
+
+# ============================================================
+# 12.4 CONVERT MODELLING VARIABLES TO FACTORS
+# ============================================================
+
+basket <- basket %>%
+  mutate(
+    
+    customer_segment =
+      factor(customer_segment),
+    
+    service_type =
+      factor(service_type),
+    
+    city =
+      factor(city),
+    
+    payment_method =
+      factor(payment_method),
+    
+    booking_channel =
+      factor(booking_channel),
+    
+    time_period =
+      factor(time_period),
+    
+    is_weekend =
+      factor(is_weekend),
+    
+    promo_code_used =
+      factor(promo_code_used),
+    
+    traffic_level =
+      factor(traffic_level),
+    
+    weather_condition =
+      factor(weather_condition)
+  )
+
+
+# Check structure
+
+str(
+  basket[
+    c(
+      "customer_segment",
+      "service_type",
+      "customer_age",
+      "city",
+      "payment_method",
+      "booking_channel",
+      "distance_km_clean",
+      "estimated_duration_min",
+      "time_period",
+      "is_weekend",
+      "promo_code_used",
+      "discount_amount_vnd",
+      "traffic_level",
+      "weather_condition",
+      "basket_value_vnd"
+    )
+  ]
+)
+
+# ============================================================
+# 13. FINAL MODELLING DATASET
+# ============================================================
+
+
+model_vars <- c(
+  
+
+  "customer_segment",
+  "service_type",
+  "customer_age",
+
+  "city",
+  "payment_method",
+  "booking_channel",
+  "distance_km_clean",
+  "estimated_duration_min",
+  
+
+  "time_period",
+  "is_weekend",
+  
+ 
+  "promo_code_used",
+  "discount_amount_vnd",
+  
+  
+  "traffic_level",
+  "weather_condition",
+  
+
+  "basket_value_vnd"
+)
+
+
+# ------------------------------------------------------------
+# Create modelling dataset
+# ------------------------------------------------------------
+
+model_data <- basket %>%
+  select(
+    booking_id,
+    all_of(model_vars)
+  )
+
+
+# ------------------------------------------------------------
+# Check dimensions
+# ------------------------------------------------------------
+
+dim(model_data)
+
+
+# ------------------------------------------------------------
+# Check structure
+# ------------------------------------------------------------
+
+str(model_data)
+
+
+# ------------------------------------------------------------
+# Check missing values
+# ------------------------------------------------------------
+
+model_missing <- model_data %>%
+  summarise(
+    across(
+      all_of(model_vars),
+      ~ sum(is.na(.))
+    )
+  ) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "variable",
+    values_to = "missing"
+  ) %>%
+  mutate(
+    percentage =
+      missing / nrow(model_data) * 100
+  ) %>%
+  arrange(
+    desc(missing)
+  )
+
+
+model_missing
+
+# ============================================================
+# 15.1 CHECK PROMOTION MISSINGNESS
+# ============================================================
+
+table(
+  model_data$promo_code_used,
+  useNA = "ifany"
+)
+# ------------------------------------------------------------
+# Check relationship between promo code and discount
+# ------------------------------------------------------------
+
+table(
+  model_data$promo_code_used,
+  is.na(model_data$discount_amount_vnd),
+  useNA = "ifany"
+)
+
+# ============================================================
+# 15.2 TRAIN / TEST SPLIT
 # ============================================================
 
 set.seed(123)
@@ -1405,61 +1902,84 @@ train_index <- createDataPartition(
   list = FALSE
 )
 
-train <- model_data[train_index, ]
-test <- model_data[-train_index, ]
+train <- model_data[
+  train_index,
+]
+
+test <- model_data[
+  -train_index,
+]
 
 
-# Check number of observations
+# Check dataset sizes
 
-nrow(model_data)
 nrow(train)
+
 nrow(test)
 
 
 # Check proportions
 
 nrow(train) / nrow(model_data)
+
 nrow(test) / nrow(model_data)
 
-
 # ============================================================
-# 15. HANDLE MISSING VALUES
+# 15.3 VARIABLE-SPECIFIC MISSING VALUE IMPUTATION
 # ============================================================
 
 # ------------------------------------------------------------
-# 15.1 Numerical variables
+# Numerical variables
 # ------------------------------------------------------------
 
-numeric_model_vars <- c(
+
+numeric_impute_vars <- c(
   "customer_age",
   "distance_km_clean"
 )
 
 
-# Calculate medians using TRAINING data only
+# Calculate training-set medians
 
 train_medians <- sapply(
-  train[numeric_model_vars],
+  train[numeric_impute_vars],
   median,
   na.rm = TRUE
 )
 
 
-# Apply training medians to both datasets
+train_medians
 
-for (var in numeric_model_vars) {
+
+# Apply training medians to TRAIN
+
+for (var in numeric_impute_vars) {
   
-  train[[var]][is.na(train[[var]])] <- train_medians[var]
+  train[[var]][
+    is.na(train[[var]])
+  ] <- train_medians[var]
+}
+
+
+# Apply the SAME training medians to TEST
+
+for (var in numeric_impute_vars) {
   
-  test[[var]][is.na(test[[var]])] <- train_medians[var]
+  test[[var]][
+    is.na(test[[var]])
+  ] <- train_medians[var]
 }
 
 
 # ------------------------------------------------------------
-# 15.2 Categorical variables
+# Categorical variables
+# ------------------------------------------------------------
+# Missing values are retained as an explicit "Unknown"
+# category rather than being replaced by the most common
+# category.
 # ------------------------------------------------------------
 
-categorical_model_vars <- c(
+categorical_impute_vars <- c(
   "payment_method",
   "traffic_level",
   "weather_condition",
@@ -1467,372 +1987,313 @@ categorical_model_vars <- c(
 )
 
 
-# Replace missing values with "Unknown"
+for (var in categorical_impute_vars) {
+  
+  # Convert to character before adding "Unknown"
+  
+  train[[var]] <- as.character(
+    train[[var]]
+  )
+  
+  test[[var]] <- as.character(
+    test[[var]]
+  )
+  
+  
+  # Replace missing values
+  
+  train[[var]][
+    is.na(train[[var]])
+  ] <- "Unknown"
+  
+  test[[var]][
+    is.na(test[[var]])
+  ] <- "Unknown"
+}
 
-for (var in categorical_model_vars) {
+
+# ------------------------------------------------------------
+# Convert categorical variables back to factors
+# ------------------------------------------------------------
+
+for (var in categorical_impute_vars) {
   
-  train[[var]] <- as.character(train[[var]])
-  test[[var]] <- as.character(test[[var]])
+  # Combine levels from train and test so that any legitimate
+  # test-set category is not accidentally lost.
   
-  train[[var]][is.na(train[[var]])] <- "Unknown"
-  test[[var]][is.na(test[[var]])] <- "Unknown"
+  factor_levels <- union(
+    unique(train[[var]]),
+    unique(test[[var]])
+  )
   
-  train[[var]] <- factor(train[[var]])
+  
+  train[[var]] <- factor(
+    train[[var]],
+    levels = factor_levels
+  )
+  
   test[[var]] <- factor(
     test[[var]],
-    levels = levels(train[[var]])
+    levels = factor_levels
   )
 }
 
+
 # ============================================================
-# 16. VALIDATE TRAIN / TEST DATA
+# 15.4 VERIFY IMPUTATION
 # ============================================================
 
 # ------------------------------------------------------------
-# 16.1 Check observations and split proportions
+# Check remaining missing values in TRAIN
 # ------------------------------------------------------------
 
-nrow(model_data)
-nrow(train)
-nrow(test)
+train_missing_after <- train %>%
+  summarise(
+    across(
+      all_of(model_vars),
+      ~ sum(is.na(.))
+    )
+  ) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "variable",
+    values_to = "missing"
+  ) %>%
+  arrange(
+    desc(missing)
+  )
 
-# Confirm no observations were lost
-nrow(train) + nrow(test) == nrow(model_data)
 
-# Check train/test proportions
-round(
-  c(
-    Train = nrow(train) / nrow(model_data),
-    Test = nrow(test) / nrow(model_data)
-  ) * 100,
-  2
+train_missing_after
+
+
+# ------------------------------------------------------------
+# Check remaining missing values in TEST
+# ------------------------------------------------------------
+
+test_missing_after <- test %>%
+  summarise(
+    across(
+      all_of(model_vars),
+      ~ sum(is.na(.))
+    )
+  ) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "variable",
+    values_to = "missing"
+  ) %>%
+  arrange(
+    desc(missing)
+  )
+
+
+test_missing_after
+
+
+# ============================================================
+# 15.5 CHECK IMPUTED VALUES
+# ============================================================
+
+train_medians
+
+# ============================================================
+# 15.6.1 NUMERICAL IMPUTATION COMPARISON
+# ============================================================
+
+# ------------------------------------------------------------
+# Combine final TRAIN and TEST data
+# ------------------------------------------------------------
+
+final_model_data <- bind_rows(
+  train,
+  test
 )
 
 
 # ------------------------------------------------------------
-# 16.2 Check variable consistency
+# Calculate BEFORE-imputation means
 # ------------------------------------------------------------
 
-# Check that train and test contain the same variables
-identical(names(train), names(test))
+before_numeric <- model_data %>%
+  summarise(
+    
+    customer_age = mean(
+      customer_age,
+      na.rm = TRUE
+    ),
+    
+    distance_km_clean = mean(
+      distance_km_clean,
+      na.rm = TRUE
+    )
+    
+  ) %>%
+  
+  pivot_longer(
+    cols = everything(),
+    names_to = "variable",
+    values_to = "mean_value"
+  ) %>%
+  
+  mutate(
+    stage = "Before imputation"
+  )
 
-# Check dimensions
+
+# ------------------------------------------------------------
+# Calculate AFTER-imputation means
+# ------------------------------------------------------------
+
+after_numeric <- final_model_data %>%
+  summarise(
+    
+    customer_age = mean(
+      customer_age,
+      na.rm = TRUE
+    ),
+    
+    distance_km_clean = mean(
+      distance_km_clean,
+      na.rm = TRUE
+    )
+    
+  ) %>%
+  
+  pivot_longer(
+    cols = everything(),
+    names_to = "variable",
+    values_to = "mean_value"
+  ) %>%
+  
+  mutate(
+    stage = "After imputation"
+  )
+
+
+# ------------------------------------------------------------
+# Combine BEFORE and AFTER
+# ------------------------------------------------------------
+
+numeric_imputation_comparison <- bind_rows(
+  before_numeric,
+  after_numeric
+) %>%
+  
+  mutate(
+    variable = case_when(
+      
+      variable == "customer_age" ~
+        "Customer age",
+      
+      variable == "distance_km_clean" ~
+        "Distance (km)",
+      
+      TRUE ~ variable
+    )
+  )
+
+
+# ------------------------------------------------------------
+# Display comparison
+# ------------------------------------------------------------
+
+numeric_imputation_comparison
+
+
+
+
+# ============================================================
+# 16. CHECK FINAL TRAIN / TEST DATA
+# ============================================================
+
 dim(train)
 dim(test)
 
+summary(train$basket_value_vnd)
+summary(test$basket_value_vnd)
 
-# ------------------------------------------------------------
-# 16.3 Check missing values
-# ------------------------------------------------------------
-
-colSums(is.na(train))
-
-colSums(is.na(test))
-
-
-# ------------------------------------------------------------
-# 16.4 Compare target variable distribution
-# ------------------------------------------------------------
-
-train %>%
-  summarise(
-    n = n(),
-    mean = mean(basket_value_vnd),
-    median = median(basket_value_vnd),
-    sd = sd(basket_value_vnd),
-    min = min(basket_value_vnd),
-    Q1 = quantile(basket_value_vnd, 0.25),
-    Q3 = quantile(basket_value_vnd, 0.75),
-    max = max(basket_value_vnd)
-  )
-
-test %>%
-  summarise(
-    n = n(),
-    mean = mean(basket_value_vnd),
-    median = median(basket_value_vnd),
-    sd = sd(basket_value_vnd),
-    min = min(basket_value_vnd),
-    Q1 = quantile(basket_value_vnd, 0.25),
-    Q3 = quantile(basket_value_vnd, 0.75),
-    max = max(basket_value_vnd)
-  )
-
-
-# ------------------------------------------------------------
-# 16.5 Compare categorical variable distributions
-# ------------------------------------------------------------
-
-prop.table(table(train$service_type))
-prop.table(table(test$service_type))
-
-prop.table(table(train$customer_segment))
-prop.table(table(test$customer_segment))
-
-prop.table(table(train$city))
-prop.table(table(test$city))
-
-prop.table(table(train$payment_method))
-prop.table(table(test$payment_method))
-
-prop.table(table(train$booking_channel))
-prop.table(table(test$booking_channel))
-
-
-# ------------------------------------------------------------
-# 16.6 Compare numerical variable distributions
-# ------------------------------------------------------------
-
-numeric_vars <- c(
-  "customer_age",
-  "distance_km_clean",
-  "estimated_duration_min",
-  "discount_amount_vnd"
-)
-
-train %>%
-  summarise(
-    across(
-      all_of(numeric_vars),
-      list(
-        mean = ~mean(.x),
-        median = ~median(.x),
-        sd = ~sd(.x)
-      )
-    )
-  )
-
-test %>%
-  summarise(
-    across(
-      all_of(numeric_vars),
-      list(
-        mean = ~mean(.x),
-        median = ~median(.x),
-        sd = ~sd(.x)
-      )
-    )
-  )
-
-
-# ------------------------------------------------------------
-# 16.7 Visual comparison of target variable
-# ------------------------------------------------------------
-
-comparison <- bind_rows(
-  train %>% mutate(dataset = "Train"),
-  test %>% mutate(dataset = "Test")
-)
-
-ggplot(
-  comparison,
-  aes(
-    x = dataset,
-    y = basket_value_vnd
-  )
-) +
-  geom_boxplot() +
-  labs(
-    title = "Basket Value Distribution: Train vs Test",
-    x = "Dataset",
-    y = "Basket Value (VND)"
-  ) +
-  theme_minimal()
-
+str(train)
 
 # ============================================================
-# 17. SAVE MODEL DATASETS
+# 16.1 EXPORT FINAL CLEANED DATASETS
 # ============================================================
+
+# ------------------------------------------------------------
+# Combine TRAIN and TEST
+# ------------------------------------------------------------
+
+final_cleaned_data <- bind_rows(
+  train,
+  test
+)
+
+
+# ------------------------------------------------------------
+# Check dimensions
+# ------------------------------------------------------------
+
+dim(train)
+dim(test)
+dim(final_cleaned_data)
+
+
+# ------------------------------------------------------------
+# Create output folder
+# ------------------------------------------------------------
+
+dir.create(
+  "data/processed",
+  showWarnings = FALSE,
+  recursive = TRUE
+)
+
+
+# ------------------------------------------------------------
+# Export TRAIN dataset
+# ------------------------------------------------------------
 
 write.csv(
   train,
-  "data/train.csv",
+  "data/processed/train_cleaned.csv",
   row.names = FALSE
 )
+
+
+# ------------------------------------------------------------
+# Export TEST dataset
+# ------------------------------------------------------------
 
 write.csv(
   test,
-  "data/test.csv",
+  "data/processed/test_cleaned.csv",
   row.names = FALSE
 )
+
+
+# ------------------------------------------------------------
+# Export FULL dataset
+# ------------------------------------------------------------
 
 write.csv(
-  model_data,
-  "data/model_data.csv",
+  final_cleaned_data,
+  "data/processed/full_cleaned_dataset_DONT_USE.csv",
   row.names = FALSE
 )
 
-# ============================================================
-# GRAB VIETNAM ANALYTICS
-# Visualizations and Descriptive Analytics
-# ============================================================
 
 # ------------------------------------------------------------
-# Figure 1: Distribution of Basket Value
+# Confirm files were exported
 # ------------------------------------------------------------
 
-p1 <- ggplot(
-  basket,
-  aes(x = basket_value_vnd)
-) +
-  
-  geom_histogram(
-    aes(
-      fill = after_stat(
-        ifelse(
-          x >= basket_threshold,
-          "High-value (Top 20%)",
-          "Below 80th Percentile"
-        )
-      )
-    ),
-    bins = 30,
-    color = "white",
-    linewidth = 0.2
-  ) +
-  
-  geom_vline(
-    xintercept = basket_threshold,
-    linetype = "dashed",
-    linewidth = 1
-  ) +
-  
-  annotate(
-    "label",
-    x = basket_threshold + 15000,
-    y = Inf,
-    label = paste0(
-      "80th percentile\n",
-      format(
-        basket_threshold,
-        big.mark = ",",
-        scientific = FALSE
-      ),
-      " VND"
-    ),
-    vjust = 1.5,
-    hjust = 0,
-    size = 4
-  ) +
-  
-  labs(
-    title = "Distribution of Basket Value",
-    subtitle = paste0(
-      "Transactions above ",
-      format(
-        basket_threshold,
-        big.mark = ",",
-        scientific = FALSE
-      ),
-      " VND represent the top 20% of orders"
-    ),
-    x = "Basket Value (VND)",
-    y = "Number of Orders",
-    fill = "Transaction Group"
-  ) +
-  
-  scale_x_continuous(
-    labels = scales::label_number(
-      big.mark = ","
-    )
-  ) +
-  
-  scale_fill_manual(
-    values = c(
-      "Below 80th Percentile" = "grey60",
-      "High-value (Top 20%)" = "#2A9D8F"
-    )
-  ) +
-  
-  theme_minimal(base_size = 13) +
-  theme(
-    plot.title = element_text(
-      face = "bold",
-      size = 18
-    ),
-    plot.subtitle = element_text(
-      size = 12
-    ),
-    axis.title = element_text(
-      face = "bold"
-    ),
-    legend.position = "bottom",
-    panel.grid.minor = element_blank()
-  )
-
-ggsave(
-  "figures/01_basket_value_distribution.pdf",
-  p1,
-  width = 10,
-  height = 7
-)
-# ============================================================
-# Figure 2: BASKET VALUE BY SERVICE
-# ============================================================
-
-p2 <- ggplot(
-  basket,
-  aes(
-    x = service_type,
-    y = basket_value_vnd
-  )
-) +
-  
-  # Boxplot
-  geom_boxplot(
-    fill = "#4C86B8",
-    color = "black",
-    width = 0.5,
-    outlier.shape = 16,
-    outlier.color = "red",
-    outlier.size = 2.5
-  ) +
-  
-  # Mean marker
-  stat_summary(
-    fun = mean,
-    geom = "point",
-    shape = 18,
-    size = 3,
-    color = "black"
-  ) +
-  
-  labs(
-    title = "Basket Value by Service Type",
-    subtitle = "Comparison of transaction value between GrabFood and GrabMart",
-    x = "Service Type",
-    y = "Basket Value (VND)"
-  ) +
-  
-  scale_y_continuous(
-    labels = scales::label_number(
-      big.mark = ","
-    )
-  ) +
-  
-  theme_minimal(base_size = 13) +
-  theme(
-    plot.title = element_text(
-      face = "bold",
-      size = 18
-    ),
-    plot.subtitle = element_text(
-      size = 12
-    ),
-    axis.title = element_text(
-      face = "bold"
-    ),
-    axis.text.x = element_text(
-      size = 12
-    ),
-    panel.grid.minor = element_blank()
-  )
-
-ggsave(
-  "figures/02_basket_value_by_service.pdf",
-  p2,
-  width = 10,
-  height = 7
+file.exists(
+  "data/processed/train_cleaned.csv"
 )
 
+file.exists(
+  "data/processed/test_cleaned.csv"
+)
 
+file.exists(
+  "data/processed/full_cleaned_dataset.csv"
+)
