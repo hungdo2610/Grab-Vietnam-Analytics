@@ -2297,3 +2297,119 @@ file.exists(
 file.exists(
   "data/processed/full_cleaned_dataset.csv"
 )
+
+
+# ============================================================
+# GRAB VIETNAM ANALYTICS
+# Visualizations 
+# ============================================================
+
+# ------------------------------------------------------------
+# Figure 1: Distribution of Basket Value
+# ------------------------------------------------------------
+basket_threshold <- quantile(
+  basket$basket_value_vnd,
+  0.80,
+  na.rm = TRUE
+)
+
+basket_threshold
+
+p1 <- ggplot(
+  basket,
+  aes(x = basket_value_vnd)
+) +
+  
+  geom_histogram(
+    aes(
+      fill = after_stat(
+        ifelse(
+          x >= basket_threshold,
+          "High-value (Top 20%)",
+          "Below 80th Percentile"
+        )
+      )
+    ),
+    bins = 30,
+    color = "white",
+    linewidth = 0.2
+  ) +
+  
+  geom_vline(
+    xintercept = basket_threshold,
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  
+  annotate(
+    "label",
+    x = basket_threshold + 15000,
+    y = Inf,
+    label = paste0(
+      "80th percentile\n",
+      format(
+        basket_threshold,
+        big.mark = ",",
+        scientific = FALSE
+      ),
+      " VND"
+    ),
+    vjust = 1.5,
+    hjust = 0,
+    size = 4
+  ) +
+  
+  labs(
+    title = "Distribution of Basket Value",
+    subtitle = paste0(
+      "Transactions above ",
+      format(
+        basket_threshold,
+        big.mark = ",",
+        scientific = FALSE
+      ),
+      " VND represent the top 20% of orders"
+    ),
+    x = "Basket Value (VND)",
+    y = "Number of Orders",
+    fill = "Transaction Group"
+  ) +
+  
+  scale_x_continuous(
+    labels = scales::label_number(
+      big.mark = ","
+    )
+  ) +
+  
+  scale_fill_manual(
+    values = c(
+      "Below 80th Percentile" = "grey60",
+      "High-value (Top 20%)" = "#2A9D8F"
+    )
+  ) +
+  
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title = element_text(
+      face = "bold",
+      size = 18
+    ),
+    plot.subtitle = element_text(
+      size = 12
+    ),
+    axis.title = element_text(
+      face = "bold"
+    ),
+    legend.position = "bottom",
+    panel.grid.minor = element_blank()
+  )
+
+p1
+
+
+ggsave(
+  "figures/01_basket_value_distribution.png",
+  p1,
+  width = 10,
+  height = 7
+)
