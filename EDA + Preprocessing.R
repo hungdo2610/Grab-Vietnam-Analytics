@@ -8,6 +8,7 @@
 # 1. LOAD PACKAGES
 # ============================================================
 
+
 library(readxl)
 library(dplyr)
 library(ggplot2)
@@ -18,7 +19,7 @@ library(lubridate)
 library(caret)
 library(randomForest)
 library(pROC)
-
+library(naniar)
 
 # ============================================================
 # 2. LOAD RAW DATA
@@ -50,8 +51,37 @@ grab <- grab %>%
       as.numeric
     )
   )
+# ============================================================
+# 
+# ============================================================
 
+grab$booking_datetime <- as.POSIXct(grab$booking_datetime)
 
+grab <- grab %>%
+  mutate(
+    booking_date = as.Date(booking_datetime)
+  )
+grab %>%
+  mutate(month = lubridate::month(booking_date, label = TRUE)) %>%
+  count(month)
+
+#
+monthly_basket <- grab %>%
+  mutate(month = lubridate::floor_date(booking_date, "month")) %>%
+  group_by(month) %>%
+  summarise(
+    avg_basket = mean(basket_value_vnd, na.rm = TRUE),
+    median_basket = median(basket_value_vnd, na.rm = TRUE),
+    transactions = n()
+  )
+
+monthly_basket
+
+#
+
+summary(grab$basket_value_vnd)
+
+sum(is.na(grab$basket_value_vnd))
 # ============================================================
 # 4. CREATE BASKET DATASET
 # ============================================================
@@ -1518,7 +1548,148 @@ model_missing_summary <- basket %>%
 
 model_missing_summary
 
+# ============================================================
+# 11.10 MCAR TEST
+# ============================================================
 
+mcar_data_model <- basket %>%
+  select(
+    customer_age,
+    distance_km_clean,
+    payment_method,
+    traffic_level,
+    weather_condition,
+    promo_code_used,
+    basket_value_vnd
+  )
+
+mcar_result_model <- mcar_test(mcar_data_model)
+
+mcar_result_model
+
+# ============================================================
+# 11.11 
+# ============================================================
+missing_vars <- c(
+  "customer_age",
+  "distance_km_clean",
+  "payment_method",
+  "traffic_level",
+  "weather_condition",
+  "promo_code_used"
+)
+
+basket_missing <- basket %>%
+  mutate(
+    across(
+      all_of(missing_vars),
+      ~ is.na(.x),
+      .names = "{.col}_missing"
+    )
+  )
+
+numeric_missing_comparison <- lapply(
+  missing_vars,
+  function(var) {
+    
+    missing_indicator <- paste0(var, "_missing")
+    
+    basket_missing %>%
+      group_by(
+        missing_status = .data[[missing_indicator]]
+      ) %>%
+      summarise(
+        n = n(),
+        mean_basket_value = mean(
+          basket_value_vnd,
+          na.rm = TRUE
+        ),
+        median_basket_value = median(
+          basket_value_vnd,
+          na.rm = TRUE
+        ),
+        mean_customer_age = mean(
+          customer_age,
+          na.rm = TRUE
+        ),
+        mean_distance = mean(
+          distance_km_clean,
+          na.rm = TRUE
+        ),
+        mean_estimated_duration = mean(
+          estimated_duration_min,
+          na.rm = TRUE
+        ),
+        mean_discount = mean(
+          discount_amount_vnd,
+          na.rm = TRUE
+        ),
+        .groups = "drop"
+      ) %>%
+      mutate(
+        variable = var,
+        .before = 1
+      )
+  }
+) %>%
+  bind_rows()
+
+numeric_missing_comparison
+
+categorical_checks <- c(
+  "service_type",
+  "customer_segment",
+  "city",
+  "booking_channel"
+)
+
+categorical_missing_comparison <- lapply(
+  missing_vars,
+  function(var) {
+    
+    missing_indicator <- paste0(var, "_missing")
+    
+    lapply(
+      categorical_checks,
+      function(group_var) {
+        
+        basket_missing %>%
+          group_by(
+            missing_status = .data[[missing_indicator]],
+            category = .data[[group_var]]
+          ) %>%
+          summarise(
+            n = n(),
+            .groups = "drop"
+          ) %>%
+          group_by(missing_status) %>%
+          mutate(
+            percentage = n / sum(n) * 100
+          ) %>%
+          ungroup() %>%
+          mutate(
+            missing_variable = var,
+            comparison_variable = group_var,
+            .before = 1
+          )
+      }
+    ) %>%
+      bind_rows()
+  }
+) %>%
+  bind_rows()
+
+categorical_missing_comparison
+
+categorical_missing_comparison %>%
+  filter(
+    missing_variable == "customer_age"
+  )
+
+categorical_missing_comparison %>%
+  filter(
+    missing_variable == "weather_condition"
+  )
 # ============================================================
 # 11.10 FINAL EDA CHECK
 # ============================================================
@@ -2298,6 +2469,29 @@ file.exists(
   "data/processed/full_cleaned_dataset.csv"
 )
 
+# ============================================================
+# GRAB VIETNAM ANALYTICS
+# Descriptive Analytics 
+# ============================================================
+
+# ============================================================
+# Summary
+# ============================================================
+
+model_data %>%
+  summarise(
+    n = n(),
+    mean = mean(basket_value_vnd, na.rm = TRUE),
+    median = median(basket_value_vnd, na.rm = TRUE),
+    sd = sd(basket_value_vnd, na.rm = TRUE),
+    min = min(basket_value_vnd, na.rm = TRUE),
+    max = max(basket_value_vnd, na.rm = TRUE)
+  )
+
+# ============================================================
+# 
+# ============================================================
+
 
 # ============================================================
 # GRAB VIETNAM ANALYTICS
@@ -2414,3 +2608,201 @@ ggsave(
   height = 7
 )
 
+# ============================================================
+# PEARSON CORRELATION MATRIX
+# ============================================================
+
+
+
+
+# ------------------------------------------------------------
+# Select numerical modelling variables
+# ------------------------------------------------------------
+
+numeric_vars <- basket %>%
+  select(
+    basket_value_vnd,
+    customer_age,
+    distance_km_clean,
+    estimated_duration_min,
+    discount_amount_vnd
+  )
+
+
+# ------------------------------------------------------------
+# Calculate Pearson correlations
+# ------------------------------------------------------------
+
+cor_matrix <- cor(
+  numeric_vars,
+  use = "pairwise.complete.obs",
+  method = "pearson"
+)
+
+
+# ------------------------------------------------------------
+# Rename variables for display
+# ------------------------------------------------------------
+
+colnames(cor_matrix) <- c(
+  "Basket Value",
+  "Customer Age",
+  "Distance",
+  "Estimated Duration",
+  "Discount"
+)
+
+rownames(cor_matrix) <- colnames(cor_matrix)
+
+
+# ------------------------------------------------------------
+# Convert correlation matrix to long format
+# ------------------------------------------------------------
+
+cor_long <- as.data.frame(
+  as.table(cor_matrix)
+)
+
+names(cor_long) <- c(
+  "Variable_1",
+  "Variable_2",
+  "Correlation"
+)
+
+
+# ------------------------------------------------------------
+# Set variable order
+# ------------------------------------------------------------
+
+variable_order <- c(
+  "Basket Value",
+  "Customer Age",
+  "Distance",
+  "Estimated Duration",
+  "Discount"
+)
+
+cor_long <- cor_long %>%
+  mutate(
+    Variable_1 = factor(
+      Variable_1,
+      levels = variable_order
+    ),
+    Variable_2 = factor(
+      Variable_2,
+      levels = variable_order
+    )
+  )
+
+
+# ------------------------------------------------------------
+# Keep upper triangle and remove diagonal
+# ------------------------------------------------------------
+
+cor_long <- cor_long %>%
+  filter(
+    as.numeric(Variable_1) <
+      as.numeric(Variable_2)
+  )
+
+
+# ------------------------------------------------------------
+# Create correlation matrix plot
+# ------------------------------------------------------------
+
+p3 <- ggplot(
+  cor_long,
+  aes(
+    x = Variable_2,
+    y = Variable_1,
+    fill = Correlation
+  )
+) +
+  
+  geom_tile(
+    color = "white",
+    linewidth = 1
+  ) +
+  
+  geom_text(
+    aes(
+      label = sprintf(
+        "%.2f",
+        Correlation
+      )
+    ),
+    size = 4
+  ) +
+  
+  scale_fill_gradient2(
+    low = "#B2182B",
+    mid = "white",
+    high = "#2166AC",
+    midpoint = 0,
+    limits = c(-1, 1),
+    name = NULL
+  ) +
+  
+  scale_x_discrete(
+    limits = variable_order
+  ) +
+  
+  scale_y_discrete(
+    limits = rev(variable_order)
+  ) +
+  
+  labs(
+    title = "Pearson Correlation Matrix",
+    subtitle = "Linear relationships among numerical modelling variables",
+    x = NULL,
+    y = NULL
+  ) +
+  
+  theme_minimal(
+    base_size = 13
+  ) +
+  
+  theme(
+    plot.title = element_text(
+      face = "bold",
+      size = 18
+    ),
+    
+    plot.subtitle = element_text(
+      size = 12
+    ),
+    
+    axis.text.x = element_text(
+      angle = 0,
+      hjust = 0.5,
+      vjust = 0.5
+    ),
+    
+    axis.text.y = element_text(
+      face = "bold"
+    ),
+    
+    panel.grid = element_blank(),
+    
+    legend.position = "right"
+  )
+
+
+# ------------------------------------------------------------
+# Display plot
+# ------------------------------------------------------------
+
+p3
+
+
+# ------------------------------------------------------------
+# Save plot
+# ------------------------------------------------------------
+
+ggsave(
+  "figures/03_pearson_correlation_matrix.png",
+  p3,
+  width = 10,
+  height = 7,
+  dpi = 300
+)
